@@ -1,7 +1,7 @@
 {
     "domain": "tasmota_musiccast",
     "name": "MusicCast",
-    "codeowners": ["@vigonotion"],
+    "codeowners": ["@jorgebeserra"],
     "config_flow": true,
     "dependencies": ["ssdp"],
     "documentation": "https://www.home-assistant.io/integrations/yamaha_musiccast",
