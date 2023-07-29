@@ -1,9 +1,9 @@
 {
-    "manufacturer": "Philips",
+    "manufacturer": "Tasmota",
     "supportedModels": [
-      "26PFL560H"
+      "PT2322"
     ],
-    "supportedController": "Broadlink",
+    "supportedController": "MQTT",
     "commandsEncoding": "Base64",
     "commands": {
         "off": "JgAaAB0dOx4cHhweHR4cHhw8HR0dHhweOzsdAA0FAAAAAAAAAAAAAAAAAAA=",
