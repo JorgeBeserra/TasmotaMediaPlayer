@@ -71,14 +71,10 @@ class MQTTController(AbstractController):
 
     async def send(self, command):
         """Send a command."""
-        # service_data = {
-        #     'topic': self._controller_data,
-        #     'payload': command
-        # }
 
         service_data = {
-            'topic': 'cmnd/' + self._unique_id,
-            'payload': command
+            'topic': 'cmnd/' + self._unique_id + '/driver129',
+            'payload': json.dumps(command)
         }
 
         await self.hass.services.async_call(

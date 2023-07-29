@@ -6,13 +6,19 @@
     "supportedController": "MQTT",
     "commandsEncoding": "Raw",
     "commands": {
-        "off": "driver129 off",
-        "on": "driver129 on",
+        "off": "OFF",
+        "on": "ON",
         "previousChannel": "JgAaAB0eHB46Hh0eHB4cHh07Ox4cHh0dHTwcAA0FAAAAAAAAAAAAAAAAAAA=",
         "nextChannel": "JgAaAB0dHR47HR0dHR4dHRw8Ox4cHhweHR0dAA0FAAAAAAAAAAAAAAAAAAA=",
-        "volumeDown": "VOLUME = 10",
-        "volumeUp": "VOLUME = 50",
+        "volumeDown": "VOLUME 60",
+        "volumeUp": "VOLUME 10",
         "mute": "MUTE",
+        "frontleft": "MUTE",
+        "frontright": "MUTE",
+        "rearleft": "MUTE",
+        "rearright": "MUTE",
+        "center": "MUTE",
+        "subwoofer": "MUTE",
         "sources": {
             "EXT1": "JgAYAB8bHxs9HB4cHzkfHDwcHxsfOjwcHwANBQ==",
             "EXT2": "JgAaAB8bPRsfHB4cHxsfHB46HxsfHDwcHzkfAA0FAAAAAAAAAAAAAAAAAAA=",
@@ -20,11 +26,7 @@
             "HDMI": "JgAaAB8cHxs9Gx8cHzkfGx8cHhwfGz0cHjofAA0FAAAAAAAAAAAAAAAAAAA=",
             "HDMI Side": "JgAYAD06PBwfGx85HxwfGx8bHxw9OR8bHwANBQ==",
             "AV Side": "JgAYAB8bPRwfGx8bHzoeHD0bHxweOh8bPQANBQ==",
-            "Channel 1": "JgAcAB8cPBweHB8bHxweHB4cHxweHB4cHxweOh4ADQUAAAAAAAAAAAAAAAA=",
-            "Channel 11": [
-                "JgAcAB8cPBweHB8bHxweHB4cHxweHB4cHxweOh4ADQUAAAAAAAAAAAAAAAA=",
-                "JgAcAB8cPBweHB8bHxweHB4cHxweHB4cHxweOh4ADQUAAAAAAAAAAAAAAAA="
-            ]
+            "Channel 1": "JgAcAB8cPBweHB8bHxweHB4cHxweHB4cHxweOh4ADQUAAAAAAAAAAAAAAAA="
         }
     }
 }
