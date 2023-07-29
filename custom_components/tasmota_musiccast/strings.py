@@ -61,7 +61,7 @@
         "state": {
           "manual": "Manual",
           "auto": "Auto",
-          "bypass": "[%key:component::yamaha_musiccast::entity::select::zone_tone_control_mode::state::bypass%]"
+          "bypass": "[%key:component::tasmota_musiccast::entity::select::zone_tone_control_mode::state::bypass%]"
         }
       },
       "zone_link_audio_quality": {

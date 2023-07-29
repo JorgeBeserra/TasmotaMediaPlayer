@@ -5,9 +5,9 @@ from aiomusiccast.capabilities import EntityType
 from homeassistant.components.media_player import MediaClass, RepeatMode
 from homeassistant.const import EntityCategory
 
-DOMAIN = "yamaha_musiccast"
+DOMAIN = "tasmota_musiccast"
 
-BRAND = "Yamaha Corporation"
+BRAND = "Sabidos"
 
 # Attributes
 ATTR_PLAYLIST = "playlist"
