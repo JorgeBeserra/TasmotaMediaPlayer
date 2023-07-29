@@ -28,7 +28,7 @@ LOOKIN_COMMANDS_ENCODING = [ENC_PRONTO, ENC_RAW]
 ESPHOME_COMMANDS_ENCODING = [ENC_RAW]
 
 
-def get_controller(hass, controller, encoding, controller_data, delay):
+def get_controller(hass, controller, encoding, unique_id, controller_data, delay):
     """Return a controller compatible with the specification provided."""
     controllers = {
         BROADLINK_CONTROLLER: BroadlinkController,
@@ -45,12 +45,13 @@ def get_controller(hass, controller, encoding, controller_data, delay):
 
 class AbstractController(ABC):
     """Representation of a controller."""
-    def __init__(self, hass, controller, encoding, controller_data, delay):
+    def __init__(self, hass, controller, encoding, unique_id, controller_data, delay):
         self.check_encoding(encoding)
         self.hass = hass
         self._controller = controller
         self._encoding = encoding
         self._controller_data = controller_data
+        self._unique_id = unique_id
         self._delay = delay
 
     @abstractmethod
@@ -143,8 +144,13 @@ class MQTTController(AbstractController):
 
     async def send(self, command):
         """Send a command."""
+        # service_data = {
+        #     'topic': self._controller_data,
+        #     'payload': command
+        # }
+
         service_data = {
-            'topic': self._controller_data,
+            'topic': 'cmnd/' + self._unique_id,
             'payload': command
         }
 

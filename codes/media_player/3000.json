@@ -6,13 +6,13 @@
     "supportedController": "MQTT",
     "commandsEncoding": "Raw",
     "commands": {
-        "off": "JgAaAB0dOx4cHhweHR4cHhw8HR0dHhweOzsdAA0FAAAAAAAAAAAAAAAAAAA=",
-        "on": "JgAcABweHR07HhweHR0dHhw8HR0dHhweHB4dHhwADQUAAAAAAAAAAAAAAAA=",
+        "off": "POWER = OFF",
+        "on": "POWER = ON",
         "previousChannel": "JgAaAB0eHB46Hh0eHB4cHh07Ox4cHh0dHTwcAA0FAAAAAAAAAAAAAAAAAAA=",
         "nextChannel": "JgAaAB0dHR47HR0dHR4dHRw8Ox4cHhweHR0dAA0FAAAAAAAAAAAAAAAAAAA=",
-        "volumeDown": "JgAaABwePBwfHBweHB4dHR0eHDw9Gx0eHDwdAA0FAAAAAAAAAAAAAAAAAAA=",
-        "volumeUp": "JgAaABweOx0fHBweHB4dHhweHDw7HR0eHB4dAA0FAAAAAAAAAAAAAAAAAAA=",
-        "mute": "JgAaAB0dOx4cHh0dHR4cHh0dHR4cPBwePDsdAA0FAAAAAAAAAAAAAAAAAAA=",
+        "volumeDown": "VOLUME = 10",
+        "volumeUp": "VOLUME = 50",
+        "mute": "MUTE",
         "sources": {
             "EXT1": "JgAYAB8bHxs9HB4cHzkfHDwcHxsfOjwcHwANBQ==",
             "EXT2": "JgAaAB8bPRsfHB4cHxsfHB46HxsfHDwcHzkfAA0FAAAAAAAAAAAAAAAAAAA=",
