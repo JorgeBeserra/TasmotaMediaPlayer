@@ -55,7 +55,7 @@ async def validate_input(hass: core.HomeAssistant, data):
 
     Data has the keys from DATA_SCHEMA with values provided by the user.
     """
-    sources = ['a']
+    sources = {'ZoneStatus':[14,0,0,0,0,0,0,0,0,0,0]}
 
     # Return info that you want to store in the config entry.
     return {CONF_PORT: data[CONF_PORT], CONF_SOURCES: sources}
