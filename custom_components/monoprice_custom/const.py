@@ -20,7 +20,7 @@ SERVICE_SET_BASS = "set_bass"
 SERVICE_SET_TREBLE = "set_treble"
 
 FIRST_RUN = "first_run"
-MONOPRICE_OBJECT = "[{'zone_status':{14,1,1,1,1,0,0,0,0,0,1}}]"
+MONOPRICE_OBJECT = "['zone_status':{14,1,1,1,1,0,0,0,0,0,1}]"
 UNDO_UPDATE_LISTENER = "update_update_listener"
 
 ATTR_BALANCE = "level"
