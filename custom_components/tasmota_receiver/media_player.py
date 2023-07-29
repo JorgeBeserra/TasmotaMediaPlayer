@@ -100,6 +100,8 @@ CONF_POWER_SENSOR = 'power_sensor'
 CONF_SOURCE_NAMES = 'source_names'
 CONF_DEVICE_CLASS = 'device_class'
 
+CONF_PORT = 3000
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_UNIQUE_ID): cv.string,
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
@@ -111,48 +113,48 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_DEVICE_CLASS, default=DEFAULT_DEVICE_CLASS): cv.string
 })
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the IR Media Player platform."""
-    device_code = config.get(CONF_DEVICE_CODE)
-    device_files_subdir = os.path.join('codes', 'media_player')
-    device_files_absdir = os.path.join(COMPONENT_ABS_DIR, device_files_subdir)
+# async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+#     """Set up the IR Media Player platform."""
+#     device_code = config.get(CONF_DEVICE_CODE)
+#     device_files_subdir = os.path.join('codes', 'media_player')
+#     device_files_absdir = os.path.join(COMPONENT_ABS_DIR, device_files_subdir)
 
-    if not os.path.isdir(device_files_absdir):
-        os.makedirs(device_files_absdir)
+#     if not os.path.isdir(device_files_absdir):
+#         os.makedirs(device_files_absdir)
 
-    device_json_filename = str(device_code) + '.json'
-    device_json_path = os.path.join(device_files_absdir, device_json_filename)
+#     device_json_filename = str(device_code) + '.json'
+#     device_json_path = os.path.join(device_files_absdir, device_json_filename)
 
-    if not os.path.exists(device_json_path):
-        _LOGGER.warning("Couldn't find the device Json file. The component will " \
-                        "try to download it from the GitHub repo.")
+#     if not os.path.exists(device_json_path):
+#         _LOGGER.warning("Couldn't find the device Json file. The component will " \
+#                         "try to download it from the GitHub repo.")
 
-        try:
-            codes_source = ("https://raw.githubusercontent.com/"
-                            "jorgebeserra/tasmota_receiver/master/"
-                            "codes/media_player/{}.json")
+#         try:
+#             codes_source = ("https://raw.githubusercontent.com/"
+#                             "jorgebeserra/tasmota_receiver/master/"
+#                             "codes/media_player/{}.json")
 
-            await Helper.downloader(codes_source.format(device_code), device_json_path)
-        except Exception:
-            _LOGGER.error("There was an error while downloading the device Json file. " \
-                          "Please check your internet connection or if the device code " \
-                          "exists on GitHub. If the problem still exists please " \
-                          "place the file manually in the proper directory.")
-            return
+#             await Helper.downloader(codes_source.format(device_code), device_json_path)
+#         except Exception:
+#             _LOGGER.error("There was an error while downloading the device Json file. " \
+#                           "Please check your internet connection or if the device code " \
+#                           "exists on GitHub. If the problem still exists please " \
+#                           "place the file manually in the proper directory.")
+#             return
 
-    with open(device_json_path) as j:
-        try:
-            device_data = json.load(j)
-        except Exception:
-            _LOGGER.error("The device JSON file is invalid")
-            return
+#     with open(device_json_path) as j:
+#         try:
+#             device_data = json.load(j)
+#         except Exception:
+#             _LOGGER.error("The device JSON file is invalid")
+#             return
 
-    async_add_entities([async_setup_entry(
-        hass, config
-    )])
+#     async_add_entities([async_setup_entry(
+#         hass, config
+#     )])
 
 
-async def async_setup_entry(
+async def async_setup_platform(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
