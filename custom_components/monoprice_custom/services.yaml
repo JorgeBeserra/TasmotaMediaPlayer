@@ -1,15 +1,25 @@
-check_updates:
-  description: Check for Tasmota Receiver updates.
-  
-update_component:
-  description: Update Tasmota Receiver component.
+snapshot:
+  name: Snapshot
+  description: Take a snapshot of the media player zone.
+  target:
+    entity:
+      integration: monoprice
+      domain: media_player
+
+restore:
+  name: Restore
+  description: Restore a snapshot of the media player zone.
+  target:
+    entity:
+      integration: monoprice
+      domain: media_player
 
 set_balance:
   name: Set Balance
   description: Set the zone balance level.
   target:
     entity:
-      integration: tasmota_receiver
+      integration: monoprice
       domain: media_player
   fields:
     level:
@@ -23,7 +33,7 @@ set_bass:
   description: Set the bass level.
   target:
     entity:
-      integration: tasmota_receiver
+      integration: monoprice
       domain: media_player
   fields:
     level:
@@ -37,7 +47,7 @@ set_treble:
   description: Set treble level.
   target:
     entity:
-      integration: tasmota_receiver
+      integration: monoprice
       domain: media_player
   fields:
     level:

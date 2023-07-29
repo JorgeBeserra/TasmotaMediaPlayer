@@ -1,6 +1,6 @@
-"""Constants for the Tasmota Receiver component."""
+"""Constants for the Monoprice 6-Zone Amplifier Media Player component."""
 
-DOMAIN = "tasmota_receiver"
+DOMAIN = "monoprice"
 
 CONF_SOURCES = "sources"
 
@@ -20,7 +20,7 @@ SERVICE_SET_BASS = "set_bass"
 SERVICE_SET_TREBLE = "set_treble"
 
 FIRST_RUN = "first_run"
-RECEIVER_OBJECT = "receiver_object"
+MONOPRICE_OBJECT = "monoprice_object"
 UNDO_UPDATE_LISTENER = "update_update_listener"
 
 ATTR_BALANCE = "level"

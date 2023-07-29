@@ -1,4 +1,10 @@
 {
-    "name": "Tasmota-Receiver",
-    "homeassistant": "0.115.0"
+    "name": "Tasmota-Receiver Home Audio Controller",
+    "domains": [
+      "media_player",
+      "sensor",
+      "number"
+    ],
+    "iot_class": "local_push",
+    "homeassistant": "2021.12.0b0"
   }
