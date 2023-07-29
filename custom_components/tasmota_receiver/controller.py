@@ -38,7 +38,7 @@ def get_controller(hass, controller, encoding, unique_id, controller_data, delay
         ESPHOME_CONTROLLER: ESPHomeController
     }
     try:
-        return controllers[controller](hass, controller, encoding, controller_data, delay)
+        return controllers[controller](hass, controller, encoding, unique_id, controller_data, delay)
     except KeyError:
         raise Exception("The controller is not supported.")
 
