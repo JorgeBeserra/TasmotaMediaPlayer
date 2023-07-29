@@ -10,6 +10,10 @@ import requests
 import struct
 import voluptuous as vol
 
+from .exceptions import ReceiverException, ReceiverConnectionException, ReceiverGroupException
+
+from .features import DeviceFeature, ZoneFeature
+
 from aiohttp import ClientSession
 from homeassistant.const import (
     ATTR_FRIENDLY_NAME, __version__ as current_ha_version)

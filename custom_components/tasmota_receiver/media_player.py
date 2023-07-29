@@ -1,305 +1,309 @@
-import asyncio
-import json
+"""Support for interfacing with Receiver 6 zone home audio controller."""
 import logging
-import os.path
 
+from serial import SerialException
+
+from homeassistant import core
+from homeassistant.components.media_player import (
+    MediaPlayerDeviceClass,
+    MediaPlayerEntity,
+    MediaPlayerEntityFeature,
+    MediaPlayerState,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_PORT
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import voluptuous as vol
 
-from homeassistant.components.media_player import (
-    MediaPlayerEntity, PLATFORM_SCHEMA)
-from homeassistant.components.media_player.const import (
-    SUPPORT_TURN_OFF, SUPPORT_TURN_ON, SUPPORT_PREVIOUS_TRACK,
-    SUPPORT_NEXT_TRACK, SUPPORT_VOLUME_STEP, SUPPORT_VOLUME_MUTE, 
-    SUPPORT_PLAY_MEDIA, SUPPORT_SELECT_SOURCE, MEDIA_TYPE_CHANNEL)
-from homeassistant.const import (
-    CONF_NAME, STATE_OFF, STATE_ON, STATE_UNKNOWN)
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.restore_state import RestoreEntity
-from . import COMPONENT_ABS_DIR, Helper
-from .controller import get_controller
+from .const import (
+    CONF_SOURCES,
+    DOMAIN,
+    FIRST_RUN,
+    RECEIVER_OBJECT,
+    SERVICE_RESTORE,
+    SERVICE_SNAPSHOT,
+    SERVICE_SET_BALANCE,
+    SERVICE_SET_BASS,
+    SERVICE_SET_TREBLE,
+    ATTR_BALANCE,
+    ATTR_BASS,
+    ATTR_TREBLE
+)
+
+SET_BALANCE_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_BALANCE, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_BASS_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_BASS, default=5): vol.All(int, vol.Range(min=0, max=15))
+    }
+)
+
+SET_TREBLE_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_TREBLE, default=5): vol.All(int, vol.Range(min=0, max=15))
+    }
+)
 
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_NAME = "Tasmota Receiver"
-DEFAULT_DEVICE_CLASS = "tv"
-DEFAULT_DELAY = 0.5
+MAX_VOLUME = 38
+PARALLEL_UPDATES = 1
 
-CONF_UNIQUE_ID = 'unique_id'
-CONF_DEVICE_CODE = 'device_code'
-CONF_CONTROLLER_DATA = "controller_data"
-CONF_DELAY = "delay"
-CONF_POWER_SENSOR = 'power_sensor'
-CONF_SOURCE_NAMES = 'source_names'
-CONF_DEVICE_CLASS = 'device_class'
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_UNIQUE_ID): cv.string,
-    vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-    vol.Required(CONF_DEVICE_CODE): cv.positive_int,
-    vol.Required(CONF_CONTROLLER_DATA): cv.string,
-    vol.Optional(CONF_DELAY, default=DEFAULT_DELAY): cv.string,
-    vol.Optional(CONF_POWER_SENSOR): cv.entity_id,
-    vol.Optional(CONF_SOURCE_NAMES): dict,
-    vol.Optional(CONF_DEVICE_CLASS, default=DEFAULT_DEVICE_CLASS): cv.string
-})
+@core.callback
+def _get_sources_from_dict(data):
+    sources_config = data[CONF_SOURCES]
+    source_id_name = {int(index): name for index, name in sources_config.items()}
+    source_name_id = {v: k for k, v in source_id_name.items()}
+    source_names = sorted(source_name_id.keys(), key=lambda v: source_name_id[v])
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the IR Media Player platform."""
-    device_code = config.get(CONF_DEVICE_CODE)
-    device_files_subdir = os.path.join('codes', 'media_player')
-    device_files_absdir = os.path.join(COMPONENT_ABS_DIR, device_files_subdir)
+    return [source_id_name, source_name_id, source_names]
 
-    if not os.path.isdir(device_files_absdir):
-        os.makedirs(device_files_absdir)
 
-    device_json_filename = str(device_code) + '.json'
-    device_json_path = os.path.join(device_files_absdir, device_json_filename)
+@core.callback
+def _get_sources(config_entry):
+    if CONF_SOURCES in config_entry.options:
+        data = config_entry.options
+    else:
+        data = config_entry.data
+    return _get_sources_from_dict(data)
 
-    if not os.path.exists(device_json_path):
-        _LOGGER.warning("Couldn't find the device Json file. The component will " \
-                        "try to download it from the GitHub repo.")
 
-        try:
-            codes_source = ("https://raw.githubusercontent.com/"
-                            "jorgebeserra/tasmota_receiver/master/"
-                            "codes/media_player/{}.json")
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the Receiver 6-zone amplifier platform."""
+    port = config_entry.data[CONF_PORT]
 
-            await Helper.downloader(codes_source.format(device_code), device_json_path)
-        except Exception:
-            _LOGGER.error("There was an error while downloading the device Json file. " \
-                          "Please check your internet connection or if the device code " \
-                          "exists on GitHub. If the problem still exists please " \
-                          "place the file manually in the proper directory.")
+    receiver = hass.data[DOMAIN][config_entry.entry_id][RECEIVER_OBJECT]
+
+    sources = _get_sources(config_entry)
+
+    entities = []
+    for i in range(1, 4):
+        for j in range(1, 7):
+            zone_id = (i * 10) + j
+            _LOGGER.info("Adding zone %d for port %s", zone_id, port)
+            entities.append(
+                ReceiverZone(receiver, sources, config_entry.entry_id, zone_id)
+            )
+
+    # only call update before add if it's the first run so we can try to detect zones
+    first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
+    async_add_entities(entities, first_run)
+
+    platform = entity_platform.async_get_current_platform()
+
+    def _call_service(entities, service_call):
+        for entity in entities:
+            if service_call.service == SERVICE_SNAPSHOT:
+                entity.snapshot()
+            elif service_call.service == SERVICE_RESTORE:
+                entity.restore()
+            elif service_call.service == SERVICE_SET_BALANCE:
+                entity.set_balance(service_call)
+            elif service_call.service == SERVICE_SET_BASS:
+                entity.set_bass(service_call)
+            elif service_call.service == SERVICE_SET_TREBLE:
+                entity.set_treble(service_call)
+
+    @service.verify_domain_control(hass, DOMAIN)
+    async def async_service_handle(service_call: core.ServiceCall) -> None:
+        """Handle for services."""
+        entities = await platform.async_extract_from_service(service_call)
+
+        if not entities:
             return
 
-    with open(device_json_path) as j:
+        hass.async_add_executor_job(_call_service, entities, service_call)
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SNAPSHOT,
+        async_service_handle,
+        schema=cv.make_entity_service_schema({}),
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_RESTORE,
+        async_service_handle,
+        schema=cv.make_entity_service_schema({}),
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_BALANCE,
+        async_service_handle,
+        schema=SET_BALANCE_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_BASS,
+        async_service_handle,
+        schema=SET_BASS_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_TREBLE,
+        async_service_handle,
+        schema=SET_TREBLE_SCHEMA,
+    )
+
+class ReceiverZone(MediaPlayerEntity):
+    """Representation of a Receiver amplifier zone."""
+    
+    _attr_device_class = MediaPlayerDeviceClass.RECEIVER
+    _attr_supported_features = (
+        MediaPlayerEntityFeature.VOLUME_MUTE
+        | MediaPlayerEntityFeature.VOLUME_SET
+        | MediaPlayerEntityFeature.VOLUME_STEP
+        | MediaPlayerEntityFeature.TURN_ON
+        | MediaPlayerEntityFeature.TURN_OFF
+        | MediaPlayerEntityFeature.SELECT_SOURCE
+        | MediaPlayerEntityFeature.SELECT_SOUND_MODE
+    )
+
+    def __init__(self, receiver, sources, namespace, zone_id):
+        """Initialize new zone."""
+        self._receiver = receiver
+        # dict source_id -> source name
+        self._source_id_name = sources[0]
+        # dict source name -> source_id
+        self._source_name_id = sources[1]
+        # ordered list of all source names
+        self._attr_source_list = sources[2]
+        self._zone_id = zone_id
+        self._attr_unique_id = f"{namespace}_{self._zone_id}"
+        self._attr_has_entity_name = True
+        self._attr_name = None
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._zone_id)},
+            manufacturer="Receiver",
+            model="6-Zone Amplifier",
+            name=f"Zone {self._zone_id}"
+        )
+        self._attr_sound_mode_list = ["Normal", "High Bass", "Medium Bass", "Low Bass"]
+
+        self._snapshot = None
+        self._update_success = True
+        self._attr_sound_mode = None
+
+    def update(self) -> None:
+        """Retrieve latest state."""
         try:
-            device_data = json.load(j)
-        except Exception:
-            _LOGGER.error("The device JSON file is invalid")
+            state = self._receiver.zone_status(self._zone_id)
+        except SerialException:
+            self._update_success = False
+            _LOGGER.warning("Could not update zone %d", self._zone_id)
             return
 
-    async_add_entities([SmartIRMediaPlayer(
-        hass, config, device_data
-    )])
+        if not state:
+            self._update_success = False
+            return
 
-class SmartIRMediaPlayer(MediaPlayerEntity, RestoreEntity):
-    def __init__(self, hass, config, device_data):
-        self.hass = hass
-        self._unique_id = config.get(CONF_UNIQUE_ID)
-        self._name = config.get(CONF_NAME)
-        self._device_code = config.get(CONF_DEVICE_CODE)
-        self._controller_data = config.get(CONF_CONTROLLER_DATA)
-        self._delay = config.get(CONF_DELAY)
-        self._power_sensor = config.get(CONF_POWER_SENSOR)
-
-        self._manufacturer = device_data['manufacturer']
-        self._supported_models = device_data['supportedModels']
-        self._supported_controller = device_data['supportedController']
-        self._commands_encoding = device_data['commandsEncoding']
-        self._commands = device_data['commands']
-
-        self._state = STATE_OFF
-        self._sources_list = []
-        self._source = None
-        self._support_flags = 0
-
-        self._device_class = config.get(CONF_DEVICE_CLASS)
-
-        #Supported features
-        if 'off' in self._commands and self._commands['off'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_TURN_OFF
-
-        if 'on' in self._commands and self._commands['on'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_TURN_ON
-
-        if 'previousChannel' in self._commands and self._commands['previousChannel'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_PREVIOUS_TRACK
-
-        if 'nextChannel' in self._commands and self._commands['nextChannel'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_NEXT_TRACK
-
-        if ('volumeDown' in self._commands and self._commands['volumeDown'] is not None) \
-        or ('volumeUp' in self._commands and self._commands['volumeUp'] is not None):
-            self._support_flags = self._support_flags | SUPPORT_VOLUME_STEP
-
-        if 'mute' in self._commands and self._commands['mute'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_VOLUME_MUTE
-
-        if 'sources' in self._commands and self._commands['sources'] is not None:
-            self._support_flags = self._support_flags | SUPPORT_SELECT_SOURCE | SUPPORT_PLAY_MEDIA
-
-            for source, new_name in config.get(CONF_SOURCE_NAMES, {}).items():
-                if source in self._commands['sources']:
-                    if new_name is not None:
-                        self._commands['sources'][new_name] = self._commands['sources'][source]
-
-                    del self._commands['sources'][source]
-
-            #Sources list
-            for key in self._commands['sources']:
-                self._sources_list.append(key)
-
-        self._temp_lock = asyncio.Lock()
-
-        #Init the IR/RF controller
-        self._controller = get_controller(
-            self.hass,
-            self._supported_controller, 
-            self._commands_encoding,
-            self._unique_id,
-            self._controller_data,
-            self._delay)
-
-    async def async_added_to_hass(self):
-        """Run when entity about to be added."""
-        await super().async_added_to_hass()
-
-        last_state = await self.async_get_last_state()
-
-        if last_state is not None:
-            self._state = last_state.state
+        self._attr_state = MediaPlayerState.ON if state.power else MediaPlayerState.OFF
+        self._attr_volume_level = state.volume / MAX_VOLUME
+        self._attr_is_volume_muted = state.mute
+        idx = state.source
+        self._attr_source = self._source_id_name.get(idx)
 
     @property
-    def should_poll(self):
-        """Push an update after each command."""
-        return True
-
-    @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return self._unique_id
-
-    @property
-    def name(self):
-        """Return the name of the media player."""
-        return self._name
-
-    @property
-    def device_class(self):
-        """Return the device_class of the media player."""
-        return self._device_class
-
-    @property
-    def state(self):
-        """Return the state of the player."""
-        return self._state
+    def entity_registry_enabled_default(self) -> bool:
+        """Return if the entity should be enabled when first added to the entity registry."""
+        if(self._zone_id == 10 or self._zone_id == 20 or self._zone_id == 30):
+            return False
+        return self._zone_id < 20 or self._update_success
 
     @property
     def media_title(self):
-        """Return the title of current playing media."""
-        return None
+        """Return the current source as medial title."""
+        return self.source
 
-    @property
-    def media_content_type(self):
-        """Content type of current playing media."""
-        return MEDIA_TYPE_CHANNEL
+    def snapshot(self):
+        """Save zone's current state."""
+        self._snapshot = self._receiver.zone_status(self._zone_id)
 
-    @property
-    def source_list(self):
-        return self._sources_list
-        
-    @property
-    def source(self):
-        return self._source
+    def restore(self):
+        """Restore saved state."""
+        if self._snapshot:
+            self._receiver.restore_zone(self._snapshot)
+            self.schedule_update_ha_state(True)
 
-    @property
-    def supported_features(self):
-        """Flag media player features that are supported."""
-        return self._support_flags
+    def select_source(self, source: str) -> None:
+        """Set input source."""
+        if source not in self._source_name_id:
+            return
+        idx = self._source_name_id[source]
+        self._receiver.set_source(self._zone_id, idx)
 
-    @property
-    def extra_state_attributes(self):
-        """Platform specific attributes."""
-        return {
-            'device_code': self._device_code,
-            'manufacturer': self._manufacturer,
-            'supported_models': self._supported_models,
-            'supported_controller': self._supported_controller,
-            'commands_encoding': self._commands_encoding,
-        }
+    def turn_on(self) -> None:
+        """Turn the media player on."""
+        self._receiver.set_power(self._zone_id, True)
 
-    async def async_turn_off(self):
+    def turn_off(self) -> None:
         """Turn the media player off."""
-        await self.send_command(self._commands['off'])
-        
-        if self._power_sensor is None:
-            self._state = STATE_OFF
-            self._source = None
-            await self.async_update_ha_state()
+        self._receiver.set_power(self._zone_id, False)
 
-    async def async_turn_on(self):
-        """Turn the media player off."""
-        await self.send_command(self._commands['on'])
+    def mute_volume(self, mute: bool) -> None:
+        """Mute (true) or unmute (false) media player."""
+        self._receiver.set_mute(self._zone_id, mute)
 
-        if self._power_sensor is None:
-            self._state = STATE_ON
-            await self.async_update_ha_state()
+    def set_volume_level(self, volume: float) -> None:
+        """Set volume level, range 0..1."""
+        self._receiver.set_volume(self._zone_id, round(volume * MAX_VOLUME))
 
-    async def async_media_previous_track(self):
-        """Send previous track command."""
-        await self.send_command(self._commands['previousChannel'])
-        await self.async_update_ha_state()
-
-    async def async_media_next_track(self):
-        """Send next track command."""
-        await self.send_command(self._commands['nextChannel'])
-        await self.async_update_ha_state()
-
-    async def async_volume_down(self):
-        """Turn volume down for media player."""
-        await self.send_command(self._commands['volumeDown'])
-        await self.async_update_ha_state()
-
-    async def async_volume_up(self):
-        """Turn volume up for media player."""
-        await self.send_command(self._commands['volumeUp'])
-        await self.async_update_ha_state()
-    
-    async def async_mute_volume(self, mute):
-        """Mute the volume."""
-        await self.send_command(self._commands['mute'])
-        await self.async_update_ha_state()
-
-    async def async_select_source(self, source):
-        """Select channel from source."""
-        self._source = source
-        await self.send_command(self._commands['sources'][source])
-        await self.async_update_ha_state()
-
-    async def async_play_media(self, media_type, media_id, **kwargs):
-        """Support channel change through play_media service."""
-        if self._state == STATE_OFF:
-            await self.async_turn_on()
-
-        if media_type != MEDIA_TYPE_CHANNEL:
-            _LOGGER.error("invalid media type")
+    def volume_up(self) -> None:
+        """Volume up the media player."""
+        if self.volume_level is None:
             return
-        if not media_id.isdigit():
-            _LOGGER.error("media_id must be a channel number")
+        volume = round(self.volume_level * MAX_VOLUME)
+        self._receiver.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
+
+    def volume_down(self) -> None:
+        """Volume down media player."""
+        if self.volume_level is None:
             return
+        volume = round(self.volume_level * MAX_VOLUME)
+        self._receiver.set_volume(self._zone_id, max(volume - 1, 0))
 
-        self._source = "Channel {}".format(media_id)
-        for digit in media_id:
-            await self.send_command(self._commands['sources']["Channel {}".format(digit)])
-        await self.async_update_ha_state()
+    def set_balance(self, call) -> None:
+        """Set balance level."""
+        level = int(call.data.get(ATTR_BALANCE))
+        self._receiver.set_balance(self._zone_id, level)
+ 
+    def set_bass(self, call) -> None:
+        """Set bass level."""
+        level = int(call.data.get(ATTR_BASS))
+        self._receiver.set_bass(self._zone_id, level)
 
-    async def send_command(self, command):
-        async with self._temp_lock:
-            try:
-                await self._controller.send(command)
-            except Exception as e:
-                _LOGGER.exception(e)
-            
-    async def async_update(self):
-        if self._power_sensor is None:
-            return
+    def set_treble(self, call) -> None:
+        """Set treble level."""
+        level = int(call.data.get(ATTR_TREBLE))
+        self._receiver.set_treble(self._zone_id, level)
 
-        power_state = self.hass.states.get(self._power_sensor)
-
-        if power_state:
-            if power_state.state == STATE_OFF:
-                self._state = STATE_OFF
-                self._source = None
-            elif power_state.state == STATE_ON:
-                self._state = STATE_ON
+    def select_sound_mode(self, sound_mode) -> None:
+        """Switch the sound mode of the entity."""
+        self._sound_mode = sound_mode
+        if(sound_mode == "Normal"):
+            self._receiver.set_bass(self._zone_id, 7)
+        elif(sound_mode == "High Bass"):
+            self._receiver.set_bass(self._zone_id, 12)
+        elif(sound_mode == "Medium Bass"):
+            self._receiver.set_bass(self._zone_id, 10)
+        elif(sound_mode == "Low Bass"):
+            self._receiver.set_bass(self._zone_id, 3)
