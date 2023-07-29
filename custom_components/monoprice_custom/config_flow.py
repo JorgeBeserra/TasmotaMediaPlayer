@@ -55,14 +55,7 @@ async def validate_input(hass: core.HomeAssistant, data):
 
     Data has the keys from DATA_SCHEMA with values provided by the user.
     """
-    // Need Connect 
-    //try:
-        //await hass.async_add_executor_job(get_monoprice, data[CONF_PORT])
-    //except SerialException as err:
-      //  _LOGGER.error("Error connecting to Monoprice controller")
-      //  raise CannotConnect from err
-
-    sources = _sources_from_config(data)
+    sources = ['a']
 
     # Return info that you want to store in the config entry.
     return {CONF_PORT: data[CONF_PORT], CONF_SOURCES: sources}
