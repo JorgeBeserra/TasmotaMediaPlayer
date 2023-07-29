@@ -1,4 +1,5 @@
 {
     "name": "Tasmota-Receiver",
-    "homeassistant": "0.115.0"
+    "homeassistant": "0.115.0",
+    "persistent_directory": "codes"
   }
