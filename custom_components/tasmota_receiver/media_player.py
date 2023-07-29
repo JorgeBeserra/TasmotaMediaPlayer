@@ -5,10 +5,12 @@ from serial import SerialException
 
 from homeassistant import core
 from homeassistant.components.media_player import (
+    MediaClass,
     MediaPlayerDeviceClass,
     MediaPlayerEntity,
     MediaPlayerEntityFeature,
     MediaPlayerState,
+    PLATFORM_SCHEMA
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PORT
@@ -78,6 +80,17 @@ def _get_sources(config_entry):
         data = config_entry.data
     return _get_sources_from_dict(data)
 
+DEFAULT_NAME = "Tasmota Receiver"
+DEFAULT_DEVICE_CLASS = "receiver"
+DEFAULT_DELAY = 0.5
+
+CONF_UNIQUE_ID = 'unique_id'
+CONF_DEVICE_CODE = 'device_code'
+CONF_CONTROLLER_DATA = "controller_data"
+CONF_DELAY = "delay"
+CONF_POWER_SENSOR = 'power_sensor'
+CONF_SOURCE_NAMES = 'source_names'
+CONF_DEVICE_CLASS = 'device_class'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_UNIQUE_ID): cv.string,
