@@ -32,7 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Error connecting to Monoprice controller at %s", port)
         raise ConfigEntryNotReady from err
     """
-    monoprice = {'ZoneStatus':{0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
+    monoprice = {'zone_status':{14,true,true,true,true,0,0,0,0,0,true}}
     
     # double negative to handle absence of value
     first_run = not bool(entry.data.get(CONF_NOT_FIRST_RUN))
