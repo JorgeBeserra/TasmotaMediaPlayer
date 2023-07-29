@@ -92,7 +92,7 @@ DEFAULT_DEVICE_CLASS = "receiver"
 DEFAULT_DELAY = 0.5
 
 CONF_UNIQUE_ID = 'unique_id'
-CONF_NAME = 'som'
+CONF_NAME = 'Tasmota Receiver'
 CONF_DEVICE_CODE = 'device_code'
 CONF_CONTROLLER_DATA = "controller_data"
 CONF_DELAY = "delay"
