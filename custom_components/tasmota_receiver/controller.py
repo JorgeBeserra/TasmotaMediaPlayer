@@ -74,7 +74,7 @@ class MQTTController(AbstractController):
 
         service_data = {
             'topic': 'cmnd/' + self._unique_id + '/driver129',
-            'payload': json.dumps(command)
+            'payload': command
         }
 
         await self.hass.services.async_call(
