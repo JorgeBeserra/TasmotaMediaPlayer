@@ -39,13 +39,13 @@ async def async_setup_entry(
     monoprice = hass.data[DOMAIN][config_entry.entry_id][MONOPRICE_OBJECT]
 
     entities = []
-    for i in range(1, 4):
-        for j in range(1, 7):
-            zone_id = (i * 10) + j
-            _LOGGER.info("Adding number entities for zone %d for port %s", zone_id, port)
-            entities.append(MonopriceZone(monoprice, "Balance", config_entry.entry_id, zone_id))
-            entities.append(MonopriceZone(monoprice, "Bass", config_entry.entry_id, zone_id))
-            entities.append(MonopriceZone(monoprice, "Treble", config_entry.entry_id, zone_id))
+    #for i in range(1, 4):
+    #    for j in range(1, 7):
+    zone_id = 1
+    _LOGGER.info("Adding number entities for zone %d for port %s", zone_id, port)
+    entities.append(MonopriceZone(monoprice, "Balance", config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Bass", config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Treble", config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
