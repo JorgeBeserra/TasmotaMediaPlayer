@@ -79,6 +79,17 @@ def _get_sources(config_entry):
     return _get_sources_from_dict(data)
 
 
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_UNIQUE_ID): cv.string,
+    vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+    vol.Required(CONF_DEVICE_CODE): cv.positive_int,
+    vol.Required(CONF_CONTROLLER_DATA): cv.string,
+    vol.Optional(CONF_DELAY, default=DEFAULT_DELAY): cv.string,
+    vol.Optional(CONF_POWER_SENSOR): cv.entity_id,
+    vol.Optional(CONF_SOURCE_NAMES): dict,
+    vol.Optional(CONF_DEVICE_CLASS, default=DEFAULT_DEVICE_CLASS): cv.string
+})
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the IR Media Player platform."""
     device_code = config.get(CONF_DEVICE_CODE)
@@ -115,8 +126,8 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             _LOGGER.error("The device JSON file is invalid")
             return
 
-    async_add_entities([SmartIRMediaPlayer(
-        hass, config, device_data
+    async_add_entities([async_setup_entry(
+        hass, config
     )])
 
 
