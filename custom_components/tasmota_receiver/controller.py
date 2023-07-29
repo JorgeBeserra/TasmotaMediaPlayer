@@ -29,8 +29,6 @@ ESPHOME_COMMANDS_ENCODING = [ENC_RAW]
 def get_controller(hass, controller, encoding, unique_id, controller_data, delay):
     """Return a controller compatible with the specification provided."""
     controllers = {
-        BROADLINK_CONTROLLER: BroadlinkController,
-        XIAOMI_CONTROLLER: XiaomiController,
         MQTT_CONTROLLER: MQTTController,
         LOOKIN_CONTROLLER: LookinController,
         ESPHOME_CONTROLLER: ESPHomeController
