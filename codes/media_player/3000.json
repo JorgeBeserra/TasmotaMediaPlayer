@@ -6,8 +6,8 @@
     "supportedController": "MQTT",
     "commandsEncoding": "Raw",
     "commands": {
-        "off": "POWER = OFF",
-        "on": "POWER = ON",
+        "off": "driver129 off",
+        "on": "driver129 on",
         "previousChannel": "JgAaAB0eHB46Hh0eHB4cHh07Ox4cHh0dHTwcAA0FAAAAAAAAAAAAAAAAAAA=",
         "nextChannel": "JgAaAB0dHR47HR0dHR4dHRw8Ox4cHhweHR0dAA0FAAAAAAAAAAAAAAAAAAA=",
         "volumeDown": "VOLUME = 10",
