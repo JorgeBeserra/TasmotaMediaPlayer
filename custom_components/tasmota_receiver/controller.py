@@ -10,8 +10,6 @@ from . import Helper
 
 _LOGGER = logging.getLogger(__name__)
 
-BROADLINK_CONTROLLER = 'Broadlink'
-XIAOMI_CONTROLLER = 'Xiaomi'
 MQTT_CONTROLLER = 'MQTT'
 LOOKIN_CONTROLLER = 'LOOKin'
 ESPHOME_CONTROLLER = 'ESPHome'
@@ -50,8 +48,8 @@ class AbstractController(ABC):
         self.hass = hass
         self._controller = controller
         self._encoding = encoding
-        self._controller_data = controller_data
         self._unique_id = unique_id
+        self._controller_data = controller_data
         self._delay = delay
 
     @abstractmethod
@@ -63,75 +61,6 @@ class AbstractController(ABC):
     async def send(self, command):
         """Send a command."""
         pass
-
-
-class BroadlinkController(AbstractController):
-    """Controls a Broadlink device."""
-
-    def check_encoding(self, encoding):
-        """Check if the encoding is supported by the controller."""
-        if encoding not in BROADLINK_COMMANDS_ENCODING:
-            raise Exception("The encoding is not supported "
-                            "by the Broadlink controller.")
-
-    async def send(self, command):
-        """Send a command."""
-        commands = []
-
-        if not isinstance(command, list): 
-            command = [command]
-
-        for _command in command:
-            if self._encoding == ENC_HEX:
-                try:
-                    _command = binascii.unhexlify(_command)
-                    _command = b64encode(_command).decode('utf-8')
-                except:
-                    raise Exception("Error while converting "
-                                    "Hex to Base64 encoding")
-
-            if self._encoding == ENC_PRONTO:
-                try:
-                    _command = _command.replace(' ', '')
-                    _command = bytearray.fromhex(_command)
-                    _command = Helper.pronto2lirc(_command)
-                    _command = Helper.lirc2broadlink(_command)
-                    _command = b64encode(_command).decode('utf-8')
-                except:
-                    raise Exception("Error while converting "
-                                    "Pronto to Base64 encoding")
-
-            commands.append('b64:' + _command)
-
-        service_data = {
-            ATTR_ENTITY_ID: self._controller_data,
-            'command':  commands,
-            'delay_secs': self._delay
-        }
-
-        await self.hass.services.async_call(
-            'remote', 'send_command', service_data)
-
-
-class XiaomiController(AbstractController):
-    """Controls a Xiaomi device."""
-
-    def check_encoding(self, encoding):
-        """Check if the encoding is supported by the controller."""
-        if encoding not in XIAOMI_COMMANDS_ENCODING:
-            raise Exception("The encoding is not supported "
-                            "by the Xiaomi controller.")
-
-    async def send(self, command):
-        """Send a command."""
-        service_data = {
-            ATTR_ENTITY_ID: self._controller_data,
-            'command':  self._encoding.lower() + ':' + command
-        }
-
-        await self.hass.services.async_call(
-            'remote', 'send_command', service_data)
-
 
 class MQTTController(AbstractController):
     """Controls a MQTT device."""
