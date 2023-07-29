@@ -1,0 +1,4 @@
+check_updates:
+  description: Check for Tasmota Receiver updates.
+update_component:
+  description: Update Tasmota Receiver component.

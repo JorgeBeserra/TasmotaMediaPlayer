@@ -1,5 +1,4 @@
 {
-    "name": "TasmotaMusicCast",
-    "homeassistant": "0.115.0",
-    "persistent_directory": "codes"
+    "name": "Tasmota-Receiver",
+    "homeassistant": "0.115.0"
   }
