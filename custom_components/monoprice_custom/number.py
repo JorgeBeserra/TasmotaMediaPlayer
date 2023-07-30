@@ -88,11 +88,11 @@ class MonopriceZone(NumberEntity):
             self._attr_icon = "mdi:scale-balance"
         elif(control_type == "Bass"):
             self._attr_native_min_value = -7
-            self._attr_native_max_value = 14
+            self._attr_native_max_value =  7
             self._attr_icon = "mdi:speaker"
         elif(control_type == "Treble"):
             self._attr_native_min_value = -7
-            self._attr_native_max_value = 14
+            self._attr_native_max_value =  7
             self._attr_icon = "mdi:surround-sound"
             
         self._update_success = True
@@ -116,13 +116,6 @@ class MonopriceZone(NumberEntity):
             self._attr_native_value = state.bass
         elif(self._control_type == "Treble"):
             self._attr_native_value = state.treble
-
-    @property
-    def entity_registry_enabled_default(self) -> bool:
-        """Return if the entity should be enabled when first added to the entity registry."""
-        if(self._zone_id == 10 or self._zone_id == 20 or self._zone_id == 30):
-            return False
-        return self._zone_id < 20 or self._update_success
 
     def set_native_value(self, value: float) -> None:
         """Update the current value."""

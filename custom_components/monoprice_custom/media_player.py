@@ -168,15 +168,15 @@ class MonopriceZone(MediaPlayerEntity):
     """Representation of a Monoprice amplifier zone."""
     
     _attr_device_class = MediaPlayerDeviceClass.RECEIVER
-    _attr_supported_features = (
-        MediaPlayerEntityFeature.VOLUME_MUTE
-        | MediaPlayerEntityFeature.VOLUME_SET
-        | MediaPlayerEntityFeature.VOLUME_STEP
-        | MediaPlayerEntityFeature.TURN_ON
-        | MediaPlayerEntityFeature.TURN_OFF
-        | MediaPlayerEntityFeature.SELECT_SOURCE
-        | MediaPlayerEntityFeature.SELECT_SOUND_MODE
-    )
+    # +_attr_supported_features = (
+    #     MediaPlayerEntityFeature.VOLUME_MUTE
+    #     | MediaPlayerEntityFeature.VOLUME_SET
+    #     | MediaPlayerEntityFeature.VOLUME_STEP
+    #     | MediaPlayerEntityFeature.TURN_ON
+    #     | MediaPlayerEntityFeature.TURN_OFF
+    #     | MediaPlayerEntityFeature.SELECT_SOURCE
+    #     | MediaPlayerEntityFeature.SELECT_SOUND_MODE
+    # )
 
     def __init__(self, monoprice, sources, namespace, zone_id):
         """Initialize new zone."""
@@ -202,6 +202,16 @@ class MonopriceZone(MediaPlayerEntity):
         self._snapshot = None
         self._update_success = True
         self._attr_sound_mode = None
+        self._attr_device_class = MediaPlayerDeviceClass.RECEIVER
+        self._attr_supported_features = (
+        MediaPlayerEntityFeature.VOLUME_MUTE
+        | MediaPlayerEntityFeature.VOLUME_SET
+        | MediaPlayerEntityFeature.VOLUME_STEP
+        | MediaPlayerEntityFeature.TURN_ON
+        | MediaPlayerEntityFeature.TURN_OFF
+        | MediaPlayerEntityFeature.SELECT_SOURCE
+        | MediaPlayerEntityFeature.SELECT_SOUND_MODE
+    )
 
     def update(self) -> None:
         """Retrieve latest state."""
@@ -222,12 +232,12 @@ class MonopriceZone(MediaPlayerEntity):
         idx = state.source
         self._attr_source = self._source_id_name.get(idx)
 
-    @property
-    def entity_registry_enabled_default(self) -> bool:
+    #@property
+    #def entity_registry_enabled_default(self) -> bool:
         """Return if the entity should be enabled when first added to the entity registry."""
-        if(self._zone_id == 10 or self._zone_id == 20 or self._zone_id == 30):
-            return False
-        return self._zone_id < 20 or self._update_success
+    #    if(self._zone_id == 10 or self._zone_id == 20 or self._zone_id == 30):
+    #        return False
+    #    return self._zone_id < 20 or self._update_success
 
     @property
     def media_title(self):
