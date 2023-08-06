@@ -99,7 +99,7 @@ async def async_setup_entry(
     zone_id = 1
     _LOGGER.info("Adding zone %d for port %s", zone_id, port)
     entities.append(
-        MonopriceZone(monoprice, config_entry.entry_id, zone_id)
+        MonopriceZone(monoprice, config_entry.entry_id, config_entry.unique_id or config_entry.entry_id, zone_id)
     )
 
     # only call update before add if it's the first run so we can try to detect zones
@@ -185,7 +185,7 @@ class MonopriceZone(MediaPlayerEntity):
     _attr_sound_mode_list = ["Normal", "High Bass", "Medium Bass", "Low Bass"]
     _attr_sound_mode = None
 
-    def __init__(self, monoprice, config_entry, zone_id):
+    def __init__(self, monoprice, config_entry, unique_id, zone_id):
         """Initialize new zone."""
         self._monoprice = monoprice
         # dict source_id -> source name
@@ -195,7 +195,7 @@ class MonopriceZone(MediaPlayerEntity):
         # ordered list of all source names
         self._attr_source_list = 1
         self._zone_id = zone_id
-        self._attr_unique_id = f"{config_entry.entry_id}_{self._zone_id}"
+        self._attr_unique_id = unique_id
         self._attr_has_entity_name = True
         self._attr_name = None
         self._attr_device_info = DeviceInfo(

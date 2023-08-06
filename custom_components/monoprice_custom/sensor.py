@@ -43,9 +43,9 @@ async def async_setup_entry(
         #zone_id = (i * 10) + j
     zone_id = 1
     _LOGGER.info("Adding sensor entities for zone %d for port %s", zone_id, port)
-    entities.append(MonopriceZone(monoprice, "Keypad", config_entry, zone_id))
-    entities.append(MonopriceZone(monoprice, "Public Anouncement", config_entry, zone_id))
-    entities.append(MonopriceZone(monoprice, "Do Not Disturb", config_entry, zone_id))
+    entities.append(MonopriceZone(monoprice, "Keypad", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Public Anouncement", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Do Not Disturb", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
@@ -64,12 +64,12 @@ async def async_setup_entry(
 class MonopriceZone(SensorEntity):
     """Representation of a Monoprice amplifier zone."""
 
-    def __init__(self, monoprice, sensor_type, config_entry, zone_id):
+    def __init__(self, monoprice, sensor_type, config_entry, unique_id,zone_id):
         """Initialize new zone sensors."""
         self._monoprice = monoprice
         self._sensor_type = sensor_type
         self._zone_id = zone_id
-        self._attr_unique_id = f"{config_entry.entry_id}_{self._zone_id}_{self._sensor_type}"
+        self._attr_unique_id = f"{unique_id}_{self._sensor_type}"
         self._attr_has_entity_name = True
         self._attr_name = f"{sensor_type}"
         self._attr_native_value = None
