@@ -90,7 +90,7 @@ async def async_setup_entry(
 
     monoprice = hass.data[DOMAIN][config_entry.entry_id][MONOPRICE_OBJECT]
 
-    sources = _get_sources(config_entry)
+    #sources = _get_sources(config_entry)
     port = config_entry.data[CONF_PORT]
 
     entities = []
@@ -99,7 +99,7 @@ async def async_setup_entry(
     zone_id = 1
     _LOGGER.info("Adding zone %d for port %s", zone_id, port)
     entities.append(
-        MonopriceZone(monoprice, sources, config_entry.entry_id, zone_id)
+        MonopriceZone(monoprice, config_entry.entry_id, zone_id)
     )
 
     # only call update before add if it's the first run so we can try to detect zones
@@ -185,15 +185,15 @@ class MonopriceZone(MediaPlayerEntity):
     _attr_sound_mode_list = ["Normal", "High Bass", "Medium Bass", "Low Bass"]
     _attr_sound_mode = None
 
-    def __init__(self, monoprice, sources, config_entry, zone_id):
+    def __init__(self, monoprice, config_entry, zone_id):
         """Initialize new zone."""
         self._monoprice = monoprice
         # dict source_id -> source name
-        self._source_id_name = sources[0]
+        self._source_id_name = 1
         # dict source name -> source_id
-        self._source_name_id = sources[1]
+        self._source_name_id = 1
         # ordered list of all source names
-        self._attr_source_list = sources[2]
+        self._attr_source_list = 1
         self._zone_id = zone_id
         self._attr_unique_id = f"{config_entry.entry_id}_{self._zone_id}"
         self._attr_has_entity_name = True
@@ -255,8 +255,8 @@ class MonopriceZone(MediaPlayerEntity):
         """Set input source."""
         if source not in self._source_name_id:
             return
-        idx = self._source_name_id[source]
-        self._monoprice.set_source(self._zone_id, idx)
+        #idx = self._source_name_id[source]
+        #self._monoprice.set_source(self._zone_id, idx)
 
     def turn_on(self) -> None:
         """Turn the media player on."""
