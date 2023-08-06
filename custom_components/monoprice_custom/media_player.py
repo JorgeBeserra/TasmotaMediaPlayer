@@ -326,7 +326,6 @@ class MonopriceZone(MediaPlayerEntity):
         # dict source name -> source_id
         self._source_name_id = 1
 
-        self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
         self._supported_controller = SUPPORTED_CONTROLLER
         self._commands_encoding = COMMANDS_ENCODING
