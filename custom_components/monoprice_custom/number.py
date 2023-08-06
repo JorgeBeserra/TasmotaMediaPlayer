@@ -111,11 +111,11 @@ class MonopriceZone(NumberEntity):
         state = {'balance': 0, 'bass': 0, 'treble': 0}
 
         if(self._control_type == "Balance"):
-            self._attr_native_value = state.balance
+            self._attr_native_value = 0
         elif(self._control_type == "Bass"):
-            self._attr_native_value = state.bass
+            self._attr_native_value = 0
         elif(self._control_type == "Treble"):
-            self._attr_native_value = state.treble
+            self._attr_native_value = 0
 
     def set_native_value(self, value: float) -> None:
         """Update the current value."""

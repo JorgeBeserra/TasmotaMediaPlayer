@@ -99,14 +99,15 @@ class MonopriceZone(SensorEntity):
         #     return
 
         #if not state:
+        #state = {'keypad':false, 'pa': True, 'do_not_disturb':false}
         self._update_success = True
 
         if(self._sensor_type == "Keypad"):
-            self._attr_native_value = '{}'.format('Connected' if state.keypad else 'Disconnected')
+            self._attr_native_value = '{}'.format('Disconnected')
         elif(self._sensor_type == "Public Anouncement"):
-            self._attr_native_value = '{}'.format('On' if state.pa else 'Off')
+            self._attr_native_value = '{}'.format('Off')
         elif(self._sensor_type == "Do Not Disturb"):
-            self._attr_native_value = '{}'.format('On' if state.do_not_disturb else 'Off')
+            self._attr_native_value = '{}'.format('Off')
 
     @property
     def entity_registry_enabled_default(self) -> bool:
