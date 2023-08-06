@@ -91,16 +91,15 @@ class MonopriceZone(SensorEntity):
 
     def update(self):
         """Retrieve latest value."""
-        try:
-            state = self._monoprice.zone_status(self._zone_id)
-        except SerialException:
-            self._update_success = False
-            _LOGGER.warning("Could not update zone %d", self._zone_id)
-            return
+        # try:
+        #     state = self._monoprice.zone_status(self._zone_id)
+        # except SerialException:
+        #     self._update_success = False
+        #     _LOGGER.warning("Could not update zone %d", self._zone_id)
+        #     return
 
-        if not state:
-            self._update_success = False
-            return
+        #if not state:
+        self._update_success = True
 
         if(self._sensor_type == "Keypad"):
             self._attr_native_value = '{}'.format('Connected' if state.keypad else 'Disconnected')

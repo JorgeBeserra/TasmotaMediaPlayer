@@ -98,16 +98,17 @@ class MonopriceZone(NumberEntity):
         
     def update(self):
         """Retrieve latest value."""
-        try:
-            state = self._monoprice.zone_status(self._zone_id)
-        except SerialException:
-            self._update_success = False
-            _LOGGER.warning("Could not update zone %d", self._zone_id)
-            return
+        # try:
+        #     state = self._monoprice.zone_status(self._zone_id)
+        # except SerialException:
+        #     self._update_success = False
+        #     _LOGGER.warning("Could not update zone %d", self._zone_id)
+        #     return
 
-        if not state:
-            self._update_success = False
-            return
+        #if not state:
+        self._update_success = True
+        #    return
+        state = {'balance': 0, 'bass': 0, 'treble': 0}
 
         if(self._control_type == "Balance"):
             self._attr_native_value = state.balance
