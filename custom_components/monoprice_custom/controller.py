@@ -19,26 +19,28 @@ MQTT_COMMANDS_ENCODING = [ENC_RAW]
 ESPHOME_COMMANDS_ENCODING = [ENC_RAW]
 
 
-def get_controller(hass, controller, encoding, unique_id):
+def get_controller(hass, controller, encoding, unique_id, controller_data, delay):
     """Return a controller compatible with the specification provided."""
     controllers = {
         MQTT_CONTROLLER: MQTTController,
         ESPHOME_CONTROLLER: ESPHomeController
     }
     try:
-        return controllers[controller](hass, controller, encoding, unique_id)
+        return controllers[controller](hass, controller, encoding, unique_id, controller_data, delay)
     except KeyError:
         raise Exception("The controller is not supported.")
 
 
 class AbstractController(ABC):
     """Representation of a controller."""
-    def __init__(self, hass, controller, encoding, unique_id):
+    def __init__(self, hass, controller, encoding, unique_id, controller_data, delay):
         self.check_encoding(encoding)
         self.hass = hass
         self._controller = controller
         self._encoding = encoding
         self._unique_id = unique_id
+        self._controller_data = controller_data
+        self._delay = delay
 
     @abstractmethod
     def check_encoding(self, encoding):
@@ -84,4 +86,4 @@ class ESPHomeController(AbstractController):
         service_data = {'command':  json.loads(command)}
 
         await self.hass.services.async_call(
-            'esphome', self._controller, service_data)
+            'esphome', self._controller_data, service_data)
