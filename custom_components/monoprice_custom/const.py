@@ -2,6 +2,8 @@
 
 DOMAIN = "monoprice"
 
+CONF_NAME = "monoprice"
+
 CONF_SOURCES = "sources"
 
 CONF_SOURCE_1 = "source_1"
