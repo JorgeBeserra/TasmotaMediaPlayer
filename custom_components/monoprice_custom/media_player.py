@@ -18,6 +18,8 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import voluptuous as vol
 
+from .controller import get_controller
+
 from .const import (
     CONF_NAME,
     CONF_SOURCES,
@@ -31,7 +33,12 @@ from .const import (
     SERVICE_SET_TREBLE,
     ATTR_BALANCE,
     ATTR_BASS,
-    ATTR_TREBLE
+    ATTR_TREBLE,
+    CONF_CONTROLLER_DATA,
+    DELAY,
+    COMMANDS,
+    COMMANDS_ENCODING,
+    SUPPORTED_CONTROLLER
 )
 
 SET_BALANCE_SCHEMA = vol.Schema(
@@ -99,7 +106,7 @@ async def async_setup_entry(
     zone_id = 1
     _LOGGER.info("Adding zone %d for port %s", zone_id, port)
     entities.append(
-        MonopriceZone(monoprice, config_entry.entry_id, config_entry.unique_id or config_entry.entry_id, zone_id)
+        MonopriceZone(hass, monoprice, config_entry.entry_id, config_entry.unique_id or config_entry.entry_id, zone_id)
     )
 
     # only call update before add if it's the first run so we can try to detect zones
@@ -185,13 +192,21 @@ class MonopriceZone(MediaPlayerEntity):
     _attr_sound_mode_list = ["Normal", "High Bass", "Medium Bass", "Low Bass"]
     _attr_sound_mode = None
 
-    def __init__(self, monoprice, config_entry, unique_id, zone_id):
+    def __init__(self, hass, monoprice, config_entry, unique_id, zone_id):
         """Initialize new zone."""
+        self.hass = hass
         self._monoprice = monoprice
         # dict source_id -> source name
         self._source_id_name = 1
         # dict source name -> source_id
         self._source_name_id = 1
+
+        self._delay = DELAY
+        self._controller_data = CONTROLLER_DATA
+        self._supported_controller = SUPPORTED_CONTROLLER
+        self._commands_encoding = COMMANDS_ENCODING
+        self._commands = COMMANDS
+
         # ordered list of all source names
         self._attr_source_list = 1
         self._zone_id = zone_id
@@ -208,6 +223,14 @@ class MonopriceZone(MediaPlayerEntity):
 
         self._snapshot = None
         self._update_success = True
+
+        self._controller = get_controller(
+            self.hass,
+            self._supported_controller,
+            self._commands_encoding,
+            self._controller_data,
+            self._delay
+        )
 
     def update(self) -> None:
         """Retrieve latest state."""
