@@ -17,13 +17,29 @@ CONF_NOT_FIRST_RUN = "not_first_run"
 
 SERVICE_SNAPSHOT = "snapshot"
 SERVICE_RESTORE = "restore"
+
+SERVICE_SET_FRONT_LEFT = "set_front_left"
+SERVICE_SET_FRONT_RIGHT = "set_front_right"
+SERVICE_SET_CENTER = "set_center"
+SERVICE_SET_REAR_LEFT = "set_rear_left"
+SERVICE_SET_REAR_RIGHT = "set_rear_right"
+SERVICE_SET_SUBWOOFER = "set_subwoofer"
+
 SERVICE_SET_BALANCE = "set_balance"
 SERVICE_SET_BASS = "set_bass"
+SERVICE_SET_MIDDLE = "set_middle"
 SERVICE_SET_TREBLE = "set_treble"
 
 FIRST_RUN = "first_run"
 MONOPRICE_OBJECT = "['zone_status':{14,1,1,1,1,0,0,0,0,0,1}]"
 UNDO_UPDATE_LISTENER = "update_update_listener"
+
+ATTR_FRONT_LEFT = "level"
+ATTR_FRONT_RIGHT = "level"
+ATTR_CENTER = "level"
+ATTR_REAR_LEFT = "level"
+ATTR_REAR_RIGHT = "level"
+ATTR_SUBWOOFER = "level"
 
 ATTR_BALANCE = "level"
 ATTR_BASS = "level"

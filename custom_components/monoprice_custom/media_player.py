@@ -28,9 +28,22 @@ from .const import (
     MONOPRICE_OBJECT,
     SERVICE_RESTORE,
     SERVICE_SNAPSHOT,
+    SERVICE_SET_FRONT_LEFT,
+    SERVICE_SET_FRONT_RIGHT,
+    SERVICE_SET_CENTER,
+    SERVICE_SET_REAR_LEFT,
+    SERVICE_SET_REAR_RIGHT,
+    SERVICE_SET_SUBWOOFER,
     SERVICE_SET_BALANCE,
     SERVICE_SET_BASS,
+    SERVICE_SET_MIDDLE,
     SERVICE_SET_TREBLE,
+    ATTR_FRONT_LEFT,
+    ATTR_FRONT_RIGHT,
+    ATTR_CENTER,
+    ATTR_REAR_LEFT,
+    ATTR_REAR_RIGHT,
+    ATTR_SUBWOOFER,
     ATTR_BALANCE,
     ATTR_BASS,
     ATTR_MIDDLE,
@@ -40,6 +53,48 @@ from .const import (
     COMMANDS,
     COMMANDS_ENCODING,
     SUPPORTED_CONTROLLER
+)
+
+SET_FRONT_LEFT_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_FRONT_LEFT, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_FRONT_RIGHT_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_FRONT_RIGHT, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_CENTER_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_CENTER, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_REAR_LEFT_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_REAR_LEFT, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_REAR_RIGHT_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_REAR_RIGHT, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
+)
+
+SET_SUBWOOFER_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_SUBWOOFER, default=0): vol.All(int, vol.Range(min=0, max=21))
+    }
 )
 
 SET_BALANCE_SCHEMA = vol.Schema(
@@ -130,6 +185,18 @@ async def async_setup_entry(
                 entity.snapshot()
             elif service_call.service == SERVICE_RESTORE:
                 entity.restore()
+            elif service_call.service == SERVICE_SET_FRONT_LEFT:
+                entity.set_front_left(service_call)
+            elif service_call.service == SERVICE_SET_FRONT_RIGHT:
+                entity.set_front_right(service_call)
+            elif service_call.service == SERVICE_SET_CENTER:
+                entity.set_center(service_call)
+            elif service_call.service == SERVICE_SET_REAR_LEFT:
+                entity.set_rear_left(service_call)
+            elif service_call.service == SERVICE_SET_REAR_RIGHT:
+                entity.set_front_right(service_call)
+            elif service_call.service == SERVICE_SET_SUBWOOFER:
+                entity.set_subwoofer(service_call)
             elif service_call.service == SERVICE_SET_BALANCE:
                 entity.set_balance(service_call)
             elif service_call.service == SERVICE_SET_BASS:
@@ -161,6 +228,48 @@ async def async_setup_entry(
         SERVICE_RESTORE,
         async_service_handle,
         schema=cv.make_entity_service_schema({}),
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_FRONT_LEFT,
+        async_service_handle,
+        schema=SET_FRONT_LEFT_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_FRONT_RIGHT,
+        async_service_handle,
+        schema=SET_FRONT_RIGHT_SCHEMA,
+    )    
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_CENTER,
+        async_service_handle,
+        schema=SET_CENTER_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_REAR_LEFT,
+        async_service_handle,
+        schema=SET_REAR_LEFT_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_REAR_RIGHT,
+        async_service_handle,
+        schema=SET_REAR_RIGHT_SCHEMA,
+    )    
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_SUBWOOFER,
+        async_service_handle,
+        schema=SET_SUBWOOFER_SCHEMA,
     )
 
     hass.services.async_register(
@@ -219,7 +328,7 @@ class MonopriceZone(MediaPlayerEntity):
         self._source_name_id = 1
 
         self._delay = DELAY
-        self._controller_data = CONTROLLER_DATA
+        self._controller_data = CONF_CONTROLLER_DATA
         self._supported_controller = SUPPORTED_CONTROLLER
         self._commands_encoding = COMMANDS_ENCODING
         self._commands = COMMANDS
@@ -328,6 +437,36 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
+
+    def set_front_left(self, call) -> None:
+        """Set front left level."""
+        level = int(call.data.get(ATTR_FRONT_LEFT))
+        self._monoprice.set_balance(self._zone_id, level)
+
+    def set_front_right(self, call) -> None:
+        """Set front right level."""
+        level = int(call.data.get(ATTR_FRONT_RIGHT))
+        self._monoprice.set_balance(self._zone_id, level)
+
+    def set_center(self, call) -> None:
+        """Set center level."""
+        level = int(call.data.get(ATTR_CENTER))
+        self._monoprice.set_balance(self._zone_id, level)
+
+    def set_rear_left(self, call) -> None:
+        """Set rear left level."""
+        level = int(call.data.get(ATTR_REAR_LEFT))
+        self._monoprice.set_balance(self._zone_id, level)
+
+    def set_rear_right(self, call) -> None:
+        """Set rear right level."""
+        level = int(call.data.get(ATTR_REAR_RIGHT))
+        self._monoprice.set_balance(self._zone_id, level)
+
+    def set_subwoofer(self, call) -> None:
+        """Set subwoofer level."""
+        level = int(call.data.get(ATTR_SUBWOOFER))
+        self._monoprice.set_balance(self._zone_id, level)
 
     def set_balance(self, call) -> None:
         """Set balance level."""

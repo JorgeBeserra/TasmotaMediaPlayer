@@ -42,6 +42,13 @@ async def async_setup_entry(
     #    for j in range(1, 7):
     zone_id = 1
     _LOGGER.info("Adding number entities for zone %d for port %s", zone_id, port)
+    entities.append(MonopriceZone(monoprice, "FrontLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "FrontRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Center", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "RearLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "RearRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Subwoofer", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+
     entities.append(MonopriceZone(monoprice, "Balance", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
     entities.append(MonopriceZone(monoprice, "Bass", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
     entities.append(MonopriceZone(monoprice, "Middle", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
@@ -82,7 +89,31 @@ class MonopriceZone(NumberEntity):
             name=f"Zone {self._zone_id}"
         )
 
-        if(control_type == "Balance"):
+        if(control_type == "FrontLeft"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "FrontRight"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "Center"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "RearLeft"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "RearRight"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "Subwoofer"):
+            self._attr_native_min_value = 0
+            self._attr_native_max_value = 20
+            self._attr_icon = "mdi:speaker"
+        elif(control_type == "Balance"):
             self._attr_native_min_value = 0
             self._attr_native_max_value = 20
             self._attr_icon = "mdi:scale-balance"
@@ -115,7 +146,19 @@ class MonopriceZone(NumberEntity):
         #    return
         state = {'balance': 0, 'bass': 0, 'treble': 0}
 
-        if(self._control_type == "Balance"):
+        if(self._control_type == "FrontLeft"):
+            self._attr_native_value = 0
+        elif(self._control_type == "FrontRight"):
+            self._attr_native_value = 0
+        elif(self._control_type == "Center"):
+            self._attr_native_value = 0
+        elif(self._control_type == "RearLeft"):
+            self._attr_native_value = 0
+        elif(self._control_type == "RearRight"):
+            self._attr_native_value = 0
+        elif(self._control_type == "Subwoofer"):
+            self._attr_native_value = 0
+        elif(self._control_type == "Balance"):
             self._attr_native_value = 0
         elif(self._control_type == "Bass"):
             self._attr_native_value = 0
@@ -126,8 +169,20 @@ class MonopriceZone(NumberEntity):
 
     def set_native_value(self, value: float) -> None:
         """Update the current value."""
-        if(self._control_type == "Balance"):
+        if(self._control_type == "FrontLeft"):
             self._monoprice.set_balance(self._zone_id, int(value))
+        elif(self._control_type == "FrontRight"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "Center"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "RearLeft"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "RearRight"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "Subwoofer"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "Balance"):
+            self._monoprice.set_bass(self._zone_id, int(value))
         elif(self._control_type == "Bass"):
             self._monoprice.set_bass(self._zone_id, int(value))
         elif(self._control_type == "Middle"):
