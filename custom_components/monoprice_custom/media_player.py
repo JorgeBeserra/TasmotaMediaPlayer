@@ -221,11 +221,12 @@ class MonopriceZone(MediaPlayerEntity):
         # if not state:
         #     self._update_success = False
         #     return
-        state = {'power':true, 'volume': 10, 'mute': false}
+        #state = {'power':true, 'volume': 10, 'mute': false}
 
-        self._attr_state = MediaPlayerState.ON if state.power else MediaPlayerState.OFF
-        self._attr_volume_level = state.volume / MAX_VOLUME
-        self._attr_is_volume_muted = state.mute
+        #self._attr_state = MediaPlayerState.ON if state.power else MediaPlayerState.OFF
+        self._attr_state = MediaPlayerState.ON
+        self._attr_volume_level = 0 / MAX_VOLUME
+        self._attr_is_volume_muted = false
         # idx = state.source
         # self._attr_source = self._source_id_name.get(idx)
 
