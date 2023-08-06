@@ -226,7 +226,7 @@ class MonopriceZone(MediaPlayerEntity):
         #self._attr_state = MediaPlayerState.ON if state.power else MediaPlayerState.OFF
         self._attr_state = MediaPlayerState.ON
         self._attr_volume_level = 0 / MAX_VOLUME
-        self._attr_is_volume_muted = false
+        self._attr_is_volume_muted = False
         # idx = state.source
         # self._attr_source = self._source_id_name.get(idx)
 
