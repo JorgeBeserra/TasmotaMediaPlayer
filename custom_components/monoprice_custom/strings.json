@@ -36,5 +36,27 @@
         }
       }
     }
+  },
+  "services": {
+    "snapshot": {
+      "name": "Snapshot",
+      "description": "Takes a snapshot of the media player zone."
+    },
+    "restore": {
+      "name": "Restore",
+      "description": "Restores a snapshot of the media player zone."
+    },
+    "set_balance": {
+      "name": "Set Balance",
+      "description": "Set the zone balance level."
+    },
+    "set_bass": {
+      "name": "Set Bass",
+      "description": "Set the bass level."
+    },
+    "set_treble": {
+      "name": "Set Treble",
+      "description": "Set treble level."
+    }
   }
 }
