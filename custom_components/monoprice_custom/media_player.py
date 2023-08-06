@@ -49,7 +49,7 @@ from .const import (
     ATTR_MIDDLE,
     ATTR_TREBLE,
     CONF_CONTROLLER_DATA,
-    DELAY,
+    CONF_DELAY,
     COMMANDS,
     COMMANDS_ENCODING,
     SUPPORTED_CONTROLLER
@@ -327,7 +327,7 @@ class MonopriceZone(MediaPlayerEntity):
         # dict source name -> source_id
         self._source_name_id = 1
 
-        self._delay = DELAY
+        self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
         self._supported_controller = SUPPORTED_CONTROLLER
         self._commands_encoding = COMMANDS_ENCODING
@@ -381,7 +381,7 @@ class MonopriceZone(MediaPlayerEntity):
 
     #@property
     #def entity_registry_enabled_default(self) -> bool:
-        """Return if the entity should be enabled when first added to the entity registry."""
+    #    """Return if the entity should be enabled when first added to the entity registry."""
     #    if(self._zone_id == 10 or self._zone_id == 20 or self._zone_id == 30):
     #        return False
     #    return self._zone_id < 20 or self._update_success
@@ -429,14 +429,17 @@ class MonopriceZone(MediaPlayerEntity):
         if self.volume_level is None:
             return
         volume = round(self.volume_level * MAX_VOLUME)
-        self._monoprice.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
+        #self._monoprice.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
+        self.send_command(self._commands['volumeUp'])
 
     def volume_down(self) -> None:
         """Volume down media player."""
         if self.volume_level is None:
             return
         volume = round(self.volume_level * MAX_VOLUME)
-        self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
+        #self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
+        self.send_command(self._commands['volumeDown'])
+    
 
     def set_front_left(self, call) -> None:
         """Set front left level."""
@@ -499,3 +502,10 @@ class MonopriceZone(MediaPlayerEntity):
             self._monoprice.set_bass(self._zone_id, 10)
         elif(sound_mode == "Low Bass"):
             self._monoprice.set_bass(self._zone_id, 3)
+    
+
+    def send_command(self, command):
+        try:
+            self._controller.send(command)
+        except Exception as e:
+            _LOGGER.exception(e)

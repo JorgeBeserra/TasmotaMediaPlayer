@@ -46,7 +46,7 @@ ATTR_BASS = "level"
 ATTR_MIDDLE = "level"
 ATTR_TREBLE = "level"
 
-DELAY = "delay"
+CONF_DELAY = 0.5
 CONF_CONTROLLER_DATA = "controller_data"
 SUPPORTED_CONTROLLER = "MQTT"
 COMMANDS_ENCODING = "RAW"
