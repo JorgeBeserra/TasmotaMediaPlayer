@@ -61,23 +61,23 @@ MAX_VOLUME = 38
 PARALLEL_UPDATES = 1
 
 
-@core.callback
-def _get_sources_from_dict(data):
-    sources_config = data[CONF_SOURCES]
-    source_id_name = {int(index): name for index, name in sources_config.items()}
-    source_name_id = {v: k for k, v in source_id_name.items()}
-    source_names = sorted(source_name_id.keys(), key=lambda v: source_name_id[v])
+# @core.callback
+# def _get_sources_from_dict(data):
+#     sources_config = data[CONF_SOURCES]
+#     source_id_name = {int(index): name for index, name in sources_config.items()}
+#     source_name_id = {v: k for k, v in source_id_name.items()}
+#     source_names = sorted(source_name_id.keys(), key=lambda v: source_name_id[v])
 
-    return [source_id_name, source_name_id, source_names]
+#     return [source_id_name, source_name_id, source_names]
 
 
-@core.callback
-def _get_sources(config_entry):
-    if CONF_SOURCES in config_entry.options:
-        data = config_entry.options
-    else:
-        data = config_entry.data
-    return _get_sources_from_dict(data)
+# @core.callback
+# def _get_sources(config_entry):
+#     if CONF_SOURCES in config_entry.options:
+#         data = config_entry.options
+#     else:
+#         data = config_entry.data
+#     return _get_sources_from_dict(data)
 
 
 async def async_setup_entry(
