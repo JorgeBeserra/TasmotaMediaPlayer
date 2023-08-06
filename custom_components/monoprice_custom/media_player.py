@@ -326,7 +326,6 @@ class MonopriceZone(MediaPlayerEntity):
         # dict source name -> source_id
         self._source_name_id = 1
 
-        self._controller_data = CONF_CONTROLLER_DATA
         self._supported_controller = SUPPORTED_CONTROLLER
         self._commands_encoding = COMMANDS_ENCODING
         self._commands = COMMANDS
@@ -351,8 +350,7 @@ class MonopriceZone(MediaPlayerEntity):
         self._controller = get_controller(
             self.hass,
             self._supported_controller,
-            self._commands_encoding,
-            self._controller_data
+            self._commands_encoding
         )
 
     def update(self) -> None:
