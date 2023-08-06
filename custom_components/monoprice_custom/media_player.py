@@ -11,7 +11,7 @@ from homeassistant.components.media_player import (
     MediaPlayerState,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform, service
 from homeassistant.helpers.entity import DeviceInfo
@@ -104,6 +104,7 @@ async def async_setup_entry(
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
+
     async_add_entities(entities, first_run)
 
     platform = entity_platform.async_get_current_platform()
@@ -170,15 +171,15 @@ class MonopriceZone(MediaPlayerEntity):
     """Representation of a Monoprice amplifier zone."""
     
     _attr_device_class = MediaPlayerDeviceClass.RECEIVER
-    # +_attr_supported_features = (
-    #     MediaPlayerEntityFeature.VOLUME_MUTE
-    #     | MediaPlayerEntityFeature.VOLUME_SET
-    #     | MediaPlayerEntityFeature.VOLUME_STEP
-    #     | MediaPlayerEntityFeature.TURN_ON
-    #     | MediaPlayerEntityFeature.TURN_OFF
-    #     | MediaPlayerEntityFeature.SELECT_SOURCE
-    #     | MediaPlayerEntityFeature.SELECT_SOUND_MODE
-    # )
+    _attr_supported_features = (
+         MediaPlayerEntityFeature.VOLUME_SET
+         | MediaPlayerEntityFeature.VOLUME_MUTE
+         | MediaPlayerEntityFeature.VOLUME_STEP
+         | MediaPlayerEntityFeature.TURN_ON
+         | MediaPlayerEntityFeature.TURN_OFF
+         | MediaPlayerEntityFeature.SELECT_SOURCE
+         | MediaPlayerEntityFeature.SELECT_SOUND_MODE
+    )
     _attr_has_entity_name = True
     _attr_name = None
     _attr_sound_mode_list = ["Normal", "High Bass", "Medium Bass", "Low Bass"]
@@ -207,36 +208,26 @@ class MonopriceZone(MediaPlayerEntity):
 
         self._snapshot = None
         self._update_success = True
-        
-        self._attr_device_class = MediaPlayerDeviceClass.RECEIVER
-        self._attr_supported_features = (
-        MediaPlayerEntityFeature.VOLUME_MUTE
-        | MediaPlayerEntityFeature.VOLUME_SET
-        | MediaPlayerEntityFeature.VOLUME_STEP
-        | MediaPlayerEntityFeature.TURN_ON
-        | MediaPlayerEntityFeature.TURN_OFF
-        | MediaPlayerEntityFeature.SELECT_SOURCE
-        | MediaPlayerEntityFeature.SELECT_SOUND_MODE
-    )
 
     def update(self) -> None:
         """Retrieve latest state."""
-        try:
-            state = self._monoprice.zone_status(self._zone_id)
-        except SerialException:
-            self._update_success = False
-            _LOGGER.warning("Could not update zone %d", self._zone_id)
-            return
+        # try:
+        #     state = self._monoprice.zone_status(self._zone_id)
+        # except SerialException:
+        #     self._update_success = False
+        #     _LOGGER.warning("Could not update zone %d", self._zone_id)
+        #     return
 
-        if not state:
-            self._update_success = False
-            return
+        # if not state:
+        #     self._update_success = False
+        #     return
+        state = {'power':true, 'volume': 10, 'mute': false}
 
         self._attr_state = MediaPlayerState.ON if state.power else MediaPlayerState.OFF
         self._attr_volume_level = state.volume / MAX_VOLUME
         self._attr_is_volume_muted = state.mute
-        idx = state.source
-        self._attr_source = self._source_id_name.get(idx)
+        # idx = state.source
+        # self._attr_source = self._source_id_name.get(idx)
 
     #@property
     #def entity_registry_enabled_default(self) -> bool:
