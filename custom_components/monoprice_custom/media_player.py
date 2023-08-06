@@ -33,6 +33,7 @@ from .const import (
     SERVICE_SET_TREBLE,
     ATTR_BALANCE,
     ATTR_BASS,
+    ATTR_MIDDLE,
     ATTR_TREBLE,
     CONF_CONTROLLER_DATA,
     DELAY,
@@ -52,6 +53,13 @@ SET_BASS_SCHEMA = vol.Schema(
     {
         vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
         vol.Optional(ATTR_BASS, default=5): vol.All(int, vol.Range(min=0, max=15))
+    }
+)
+
+SET_MIDDLE_SCHEMA = vol.Schema(
+    {
+        vol.Optional("entity_id", default=[]): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_MIDDLE, default=5): vol.All(int, vol.Range(min=0, max=15))
     }
 )
 
@@ -126,6 +134,8 @@ async def async_setup_entry(
                 entity.set_balance(service_call)
             elif service_call.service == SERVICE_SET_BASS:
                 entity.set_bass(service_call)
+            elif service_call.service == SERVICE_SET_MIDDLE:
+                entity.set_middle(service_call)
             elif service_call.service == SERVICE_SET_TREBLE:
                 entity.set_treble(service_call)
 
@@ -165,6 +175,13 @@ async def async_setup_entry(
         SERVICE_SET_BASS,
         async_service_handle,
         schema=SET_BASS_SCHEMA,
+    )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_MIDDLE,
+        async_service_handle,
+        schema=SET_MIDDLE_SCHEMA,
     )
 
     hass.services.async_register(
@@ -320,6 +337,11 @@ class MonopriceZone(MediaPlayerEntity):
     def set_bass(self, call) -> None:
         """Set bass level."""
         level = int(call.data.get(ATTR_BASS))
+        self._monoprice.set_bass(self._zone_id, level)
+    
+    def set_middle(self, call) -> None:
+        """Set middle level."""
+        level = int(call.data.get(ATTR_MIDDLE))
         self._monoprice.set_bass(self._zone_id, level)
 
     def set_treble(self, call) -> None:

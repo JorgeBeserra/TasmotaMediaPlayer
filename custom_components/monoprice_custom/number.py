@@ -44,6 +44,7 @@ async def async_setup_entry(
     _LOGGER.info("Adding number entities for zone %d for port %s", zone_id, port)
     entities.append(MonopriceZone(monoprice, "Balance", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
     entities.append(MonopriceZone(monoprice, "Bass", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Middle", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
     entities.append(MonopriceZone(monoprice, "Treble", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
@@ -89,6 +90,10 @@ class MonopriceZone(NumberEntity):
             self._attr_native_min_value = -7
             self._attr_native_max_value =  7
             self._attr_icon = "mdi:speaker"
+        elif(control_type == "Middle"):
+            self._attr_native_min_value = -7
+            self._attr_native_max_value =  7
+            self._attr_icon = "mdi:speaker"
         elif(control_type == "Treble"):
             self._attr_native_min_value = -7
             self._attr_native_max_value =  7
@@ -114,6 +119,8 @@ class MonopriceZone(NumberEntity):
             self._attr_native_value = 0
         elif(self._control_type == "Bass"):
             self._attr_native_value = 0
+        elif(self._control_type == "Middle"):
+            self._attr_native_value = 0
         elif(self._control_type == "Treble"):
             self._attr_native_value = 0
 
@@ -122,6 +129,8 @@ class MonopriceZone(NumberEntity):
         if(self._control_type == "Balance"):
             self._monoprice.set_balance(self._zone_id, int(value))
         elif(self._control_type == "Bass"):
+            self._monoprice.set_bass(self._zone_id, int(value))
+        elif(self._control_type == "Middle"):
             self._monoprice.set_bass(self._zone_id, int(value))
         elif(self._control_type == "Treble"):
             self._monoprice.set_treble(self._zone_id, int(value))

@@ -27,6 +27,7 @@ UNDO_UPDATE_LISTENER = "update_update_listener"
 
 ATTR_BALANCE = "level"
 ATTR_BASS = "level"
+ATTR_MIDDLE = "level"
 ATTR_TREBLE = "level"
 
 DELAY = "delay"
