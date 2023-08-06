@@ -19,28 +19,27 @@ MQTT_COMMANDS_ENCODING = [ENC_RAW]
 ESPHOME_COMMANDS_ENCODING = [ENC_RAW]
 
 
-def get_controller(hass, controller, encoding, unique_id, controller_data, delay):
+def get_controller(hass, controller, encoding, unique_id, controller_data):
     """Return a controller compatible with the specification provided."""
     controllers = {
         MQTT_CONTROLLER: MQTTController,
         ESPHOME_CONTROLLER: ESPHomeController
     }
     try:
-        return controllers[controller](hass, controller, encoding, unique_id, controller_data, delay)
+        return controllers[controller](hass, controller, encoding, unique_id, controller_data)
     except KeyError:
         raise Exception("The controller is not supported.")
 
 
 class AbstractController(ABC):
     """Representation of a controller."""
-    def __init__(self, hass, controller, encoding, unique_id, controller_data, delay):
+    def __init__(self, hass, controller, encoding, unique_id, controller_data):
         self.check_encoding(encoding)
         self.hass = hass
         self._controller = controller
         self._encoding = encoding
         self._unique_id = unique_id
         self._controller_data = controller_data
-        self._delay = delay
 
     @abstractmethod
     def check_encoding(self, encoding):

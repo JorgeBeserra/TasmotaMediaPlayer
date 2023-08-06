@@ -1,7 +1,7 @@
 {
   "domain": "monoprice",
   "name": "Tasmota Receiver 6-Zone Amplifier Custom",
-  "codeowners": ["@jorgebeserra", "@OnFreund", "@TheBradleySanders"],
+  "codeowners": ["@jorgebeserra"],
   "config_flow": true,
   "documentation": "https://github.com/jorgebeserra/TasmotaReceiver",
   "iot_class": "local_polling",

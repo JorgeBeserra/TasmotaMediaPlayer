@@ -49,7 +49,6 @@ from .const import (
     ATTR_MIDDLE,
     ATTR_TREBLE,
     CONF_CONTROLLER_DATA,
-    CONF_DELAY,
     COMMANDS,
     COMMANDS_ENCODING,
     SUPPORTED_CONTROLLER
@@ -354,8 +353,7 @@ class MonopriceZone(MediaPlayerEntity):
             self.hass,
             self._supported_controller,
             self._commands_encoding,
-            self._controller_data,
-            self._delay
+            self._controller_data
         )
 
     def update(self) -> None:
