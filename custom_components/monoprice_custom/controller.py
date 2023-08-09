@@ -48,7 +48,7 @@ class AbstractController(ABC):
         pass
 
     @abstractmethod
-    async def send(self, command):
+    async def send(self, command, level: int):
         """Send a command."""
         pass
 
@@ -61,12 +61,12 @@ class MQTTController(AbstractController):
             raise Exception("The encoding is not supported "
                             "by the mqtt controller.")
 
-    async def send(self, command):
+    async def send(self, command, level: int):
         """Send a command."""
 
         service_data = {
             'topic': 'cmnd/' + self._unique_id + '/driver129',
-            'payload': command
+            'payload': command + ' ' + level
         }
 
         await self.hass.services.async_call(
@@ -81,9 +81,9 @@ class ESPHomeController(AbstractController):
             raise Exception("The encoding is not supported "
                             "by the ESPHome controller.")
 
-    async def send(self, command):
+    async def send(self, command, level: int):
         """Send a command."""
-        service_data = {'command':  json.loads(command)}
+        service_data = {'command':  json.loads(command) + ' ' + json.loads(command) }
 
         await self.hass.services.async_call(
             'esphome', self._controller_data, service_data)

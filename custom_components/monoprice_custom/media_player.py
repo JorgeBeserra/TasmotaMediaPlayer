@@ -440,57 +440,56 @@ class MonopriceZone(MediaPlayerEntity):
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
         self.send_command(self._commands['volumeDown'])
-    
 
     def set_front_left(self, call) -> None:
         """Set front left level."""
         level = int(call.data.get(ATTR_FRONT_LEFT))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['frontLeft'], level)
 
     def set_front_right(self, call) -> None:
         """Set front right level."""
         level = int(call.data.get(ATTR_FRONT_RIGHT))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['frontRight'], level)
 
     def set_center(self, call) -> None:
         """Set center level."""
         level = int(call.data.get(ATTR_CENTER))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['center'], level)
 
     def set_rear_left(self, call) -> None:
         """Set rear left level."""
         level = int(call.data.get(ATTR_REAR_LEFT))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['rearLeft'], level)
 
     def set_rear_right(self, call) -> None:
         """Set rear right level."""
         level = int(call.data.get(ATTR_REAR_RIGHT))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['rearRight'], level)
 
     def set_subwoofer(self, call) -> None:
         """Set subwoofer level."""
         level = int(call.data.get(ATTR_SUBWOOFER))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['subwoofer'], level)
 
     def set_balance(self, call) -> None:
         """Set balance level."""
         level = int(call.data.get(ATTR_BALANCE))
-        self._monoprice.set_balance(self._zone_id, level)
+        self.send_command(self._commands['balance'], level)
  
     def set_bass(self, call) -> None:
         """Set bass level."""
         level = int(call.data.get(ATTR_BASS))
-        self._monoprice.set_bass(self._zone_id, level)
+        self.send_command(self._commands['bass'], level)
     
     def set_middle(self, call) -> None:
         """Set middle level."""
         level = int(call.data.get(ATTR_MIDDLE))
-        self._monoprice.set_bass(self._zone_id, level)
+        self.send_command(self._commands['middle'], level)
 
     def set_treble(self, call) -> None:
         """Set treble level."""
         level = int(call.data.get(ATTR_TREBLE))
-        self._monoprice.set_treble(self._zone_id, level)
+        self.send_command(self._commands['treble'], level)
 
     def select_sound_mode(self, sound_mode) -> None:
         """Switch the sound mode of the entity."""
@@ -504,9 +503,8 @@ class MonopriceZone(MediaPlayerEntity):
         elif(sound_mode == "Low Bass"):
             self._monoprice.set_bass(self._zone_id, 3)
     
-
-    def send_command(self, command):
+    def send_command(self, command, level):
         try:
-            self._controller.send(command)
+            self._controller.send(command, level)
         except Exception as e:
             _LOGGER.exception(e)
