@@ -193,25 +193,25 @@ class MonopriceZone(NumberEntity):
     def set_native_value(self, value: float) -> None:
         """Update the current value."""
         if(self._control_type == "FrontLeft"):
-            self._monoprice.set_balance(self._zone_id, int(value))
+            self.send_command(self._commands['frontLeft'], int(value))
         elif(self._control_type == "FrontRight"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['frontRight'], int(value))
         elif(self._control_type == "Center"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['center'], int(value))
         elif(self._control_type == "RearLeft"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['rearLeft'], int(value))
         elif(self._control_type == "RearRight"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['rearRight'], int(value))
         elif(self._control_type == "Subwoofer"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['subwoofer'], int(value))
         elif(self._control_type == "Balance"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['balance'], int(value))
         elif(self._control_type == "Bass"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['bass'], int(value))
         elif(self._control_type == "Middle"):
-            self._monoprice.set_bass(self._zone_id, int(value))
+            self.send_command(self._commands['middle'], int(value))
         elif(self._control_type == "Treble"):
-            self._monoprice.set_treble(self._zone_id, int(value))
+            self.send_command(self._commands['treble'], int(value))
 
     def send_command(self, command, level):
         try:
