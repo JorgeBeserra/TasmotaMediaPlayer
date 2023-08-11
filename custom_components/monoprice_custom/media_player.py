@@ -411,19 +411,19 @@ class MonopriceZone(MediaPlayerEntity):
 
     def turn_on(self) -> None:
         """Turn the media player on."""
-        self._monoprice.set_power(self._zone_id, True)
+        self.send_command(self._commands['off'], 1)
 
     def turn_off(self) -> None:
         """Turn the media player off."""
-        self._monoprice.set_power(self._zone_id, False)
+        self.send_command(self._commands['off'], 0)
 
     def mute_volume(self, mute: bool) -> None:
         """Mute (true) or unmute (false) media player."""
-        self._monoprice.set_mute(self._zone_id, mute)
+        self.send_command(self._commands['mute'])
 
     def set_volume_level(self, volume: float) -> None:
         """Set volume level, range 0..1."""
-        self._monoprice.set_volume(self._zone_id, round(volume * MAX_VOLUME))
+        self.send_command(self._commands['volumeSet'], round(volume * MAX_VOLUME))
 
     def volume_up(self) -> None:
         """Volume up the media player."""
@@ -431,7 +431,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
-        self.send_command(self._commands['volumeUp'])
+        self.send_command(self._commands['volumeUp'], 0)
 
     def volume_down(self) -> None:
         """Volume down media player."""
@@ -439,7 +439,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
-        self.send_command(self._commands['volumeDown'])
+        self.send_command(self._commands['volumeDown'], 0)
 
     def set_front_left(self, call) -> None:
         """Set front left level."""
@@ -495,13 +495,13 @@ class MonopriceZone(MediaPlayerEntity):
         """Switch the sound mode of the entity."""
         self._sound_mode = sound_mode
         if(sound_mode == "Normal"):
-            self._monoprice.set_bass(self._zone_id, 7)
+            self.send_command(self._commands['setNormalBass'], 1)
         elif(sound_mode == "High Bass"):
-            self._monoprice.set_bass(self._zone_id, 12)
+            self.send_command(self._commands['setHighBass'], 1)
         elif(sound_mode == "Medium Bass"):
-            self._monoprice.set_bass(self._zone_id, 10)
+            self.send_command(self._commands['setMediumBass'], 1)
         elif(sound_mode == "Low Bass"):
-            self._monoprice.set_bass(self._zone_id, 3)
+            self.send_command(self._commands['setLowBass'], 1)
     
     def send_command(self, command, level):
         try:

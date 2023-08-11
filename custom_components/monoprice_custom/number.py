@@ -22,8 +22,15 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import (
     DOMAIN,
     FIRST_RUN,
-    MONOPRICE_OBJECT
+    MONOPRICE_OBJECT,
+    CONF_DELAY,
+    CONF_CONTROLLER_DATA,
+    COMMANDS,
+    COMMANDS_ENCODING,
+    SUPPORTED_CONTROLLER
 )
+
+from .controller import get_controller
 
 _LOGGER = logging.getLogger(__name__)
 PARALLEL_UPDATES = 1
@@ -42,17 +49,17 @@ async def async_setup_entry(
     #    for j in range(1, 7):
     zone_id = 1
     _LOGGER.info("Adding number entities for zone %d for port %s", zone_id, port)
-    entities.append(MonopriceZone(monoprice, "FrontLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "FrontRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Center", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "RearLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "RearRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Subwoofer", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "FrontLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "FrontRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Center", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "RearLeft", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "RearRight", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Subwoofer", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
-    entities.append(MonopriceZone(monoprice, "Balance", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Bass", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Middle", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Treble", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Balance", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Bass", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Middle", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Treble", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
@@ -71,11 +78,18 @@ async def async_setup_entry(
 class MonopriceZone(NumberEntity):
     """Representation of a Monoprice amplifier zone."""
 
-    def __init__(self, monoprice, control_type, config_entry, unique_id, zone_id):
+    def __init__(self, hass, monoprice, control_type, config_entry, unique_id, zone_id):
         """Initialize new zone controls."""
+        self.hass = hass
         self._monoprice = monoprice
         self._control_type = control_type
         self._zone_id = zone_id
+
+        self._delay = CONF_DELAY
+        self._controller_data = CONF_CONTROLLER_DATA
+        self._supported_controller = SUPPORTED_CONTROLLER
+        self._commands_encoding = COMMANDS_ENCODING
+        self._commands = COMMANDS
         
         self._attr_unique_id = f"{unique_id}_{self._control_type}"
         self._attr_has_entity_name = True
@@ -129,6 +143,15 @@ class MonopriceZone(NumberEntity):
             self._attr_native_min_value = -7
             self._attr_native_max_value =  7
             self._attr_icon = "mdi:surround-sound"
+        
+        self._controller = get_controller(
+            self.hass,
+            self._supported_controller,
+            self._commands_encoding,
+            unique_id,
+            self._controller_data,
+            self._delay
+        )
             
         self._update_success = True
         
@@ -189,3 +212,9 @@ class MonopriceZone(NumberEntity):
             self._monoprice.set_bass(self._zone_id, int(value))
         elif(self._control_type == "Treble"):
             self._monoprice.set_treble(self._zone_id, int(value))
+
+    def send_command(self, command, level):
+        try:
+            self._controller.send(command, level)
+        except Exception as e:
+            _LOGGER.exception(e)
