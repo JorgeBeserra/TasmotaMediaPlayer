@@ -50,4 +50,4 @@ CONF_DELAY = 0.5
 CONF_CONTROLLER_DATA = "controller_data"
 SUPPORTED_CONTROLLER = "MQTT"
 COMMANDS_ENCODING = "Raw"
-COMMANDS = {"off": "OFF", "on": "ON", "volumeSet": "volumeSet", "volumeDown": "volumeDown", "volumeUp": "volumeUp", "frontLeft": "frontleft", "frontRight": "frontright", "rearLeft": "rearleft", "rearRight": "rearright", "center": "center", "subwoofer": "subwoofer", "mute": "mute", "3d": "3d", "tone": "tone"}
+COMMANDS = {"off": "OFF", "on": "ON", "volumeSet": "volumeSet", "volumeDown": "volumeDown", "volumeUp": "volumeUp", "frontLeft": "frontleft", "frontRight": "frontright", "rearLeft": "rearleft", "rearRight": "rearright", "center": "center", "subwoofer": "subwoofer", "mute": "mute", "bass": "bass", "middle": "middle", "treble": "treble", "3d": "3d", "tone": "tone"}
