@@ -394,12 +394,14 @@ class MonopriceZone(MediaPlayerEntity):
 
     def snapshot(self):
         """Save zone's current state."""
-        self._snapshot = self._monoprice.zone_status(self._zone_id)
+        #self._snapshot = self._monoprice.zone_status(self._zone_id)
+        self._snapshot = self.send_command(self._commands['status'], 0)
 
     def restore(self):
         """Restore saved state."""
         if self._snapshot:
-            self._monoprice.restore_zone(self._snapshot)
+            #self._monoprice.restore_zone(self._snapshot)
+            self.send_command(self._commands['snapshot'], 1)
             self.schedule_update_ha_state(True)
 
     def select_source(self, source: str) -> None:
