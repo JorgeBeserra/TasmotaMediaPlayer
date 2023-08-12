@@ -190,7 +190,7 @@ class MonopriceZone(NumberEntity):
         elif(self._control_type == "Treble"):
             self._attr_native_value = 0
 
-    async def set_native_value(self, value: float) -> None:
+    async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         if(self._control_type == "FrontLeft"):
             await self.send_command(self._commands['frontLeft'], int(value))
