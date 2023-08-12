@@ -190,31 +190,32 @@ class MonopriceZone(NumberEntity):
         elif(self._control_type == "Treble"):
             self._attr_native_value = 0
 
-    def set_native_value(self, value: float) -> None:
+    async def set_native_value(self, value: float) -> None:
         """Update the current value."""
         if(self._control_type == "FrontLeft"):
-            self.send_command(self._commands['frontLeft'], int(value))
+            await self.send_command(self._commands['frontLeft'], int(value))
         elif(self._control_type == "FrontRight"):
-            self.send_command(self._commands['frontRight'], int(value))
+            await self.send_command(self._commands['frontRight'], int(value))
         elif(self._control_type == "Center"):
-            self.send_command(self._commands['center'], int(value))
+            await self.send_command(self._commands['center'], int(value))
         elif(self._control_type == "RearLeft"):
-            self.send_command(self._commands['rearLeft'], int(value))
+            await self.send_command(self._commands['rearLeft'], int(value))
         elif(self._control_type == "RearRight"):
-            self.send_command(self._commands['rearRight'], int(value))
+            await self.send_command(self._commands['rearRight'], int(value))
         elif(self._control_type == "Subwoofer"):
-            self.send_command(self._commands['subwoofer'], int(value))
+            await self.send_command(self._commands['subwoofer'], int(value))
         elif(self._control_type == "Balance"):
-            self.send_command(self._commands['balance'], int(value))
+            await self.send_command(self._commands['balance'], int(value))
         elif(self._control_type == "Bass"):
-            self.send_command(self._commands['bass'], int(value))
+            await self.send_command(self._commands['bass'], int(value))
         elif(self._control_type == "Middle"):
-            self.send_command(self._commands['middle'], int(value))
+            await self.send_command(self._commands['middle'], int(value))
         elif(self._control_type == "Treble"):
-            self.send_command(self._commands['treble'], int(value))
+            await self.send_command(self._commands['treble'], int(value))
 
-    def send_command(self, command, level):
-        try:
-            self._controller.send(command, level)
-        except Exception as e:
-            _LOGGER.exception(e)
+    async def send_command(self, command, level):
+        async with self._temp_lock:
+            try:
+                await self._controller.send(command, level)
+            except Exception as e:
+                _LOGGER.exception(e)

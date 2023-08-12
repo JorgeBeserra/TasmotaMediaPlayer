@@ -423,13 +423,15 @@ class MonopriceZone(MediaPlayerEntity):
         """Turn the media player off."""
         self.send_command(self._commands['off'], 0)
 
-    def mute_volume(self, mute: bool) -> None:
+    async def async_mute_volume(self, mute: bool) -> None:
         """Mute (true) or unmute (false) media player."""
-        self.send_command(self._commands['mute'])
+        await self.send_command(self._commands['mute'])
+        await self.async_update_ha_state()
 
-    async def set_volume_level(self, volume: float) -> None:
+    async def async_set_volume_level(self, volume: float) -> None:
         """Set volume level, range 0..1."""
         await self.send_command(self._commands['volumeSet'], round(volume * MAX_VOLUME))
+        await self.async_update_ha_state()
 
     async def async_volume_up(self) -> None:
         """Volume up the media player."""

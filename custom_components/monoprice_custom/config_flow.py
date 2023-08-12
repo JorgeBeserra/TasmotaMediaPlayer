@@ -12,9 +12,7 @@ from homeassistant.const import CONF_PORT
 
 from .const import (
     CONF_SOURCE_1,
-    CONF_SOURCE_2,
-    CONF_SOURCE_3,
-    CONF_SOURCE_4,
+    CONF_SOURCE_2,    
     CONF_SOURCES,
     DOMAIN,
 )
@@ -23,9 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 SOURCES = [
     CONF_SOURCE_1,
-    CONF_SOURCE_2,
-    CONF_SOURCE_3,
-    CONF_SOURCE_4
+    CONF_SOURCE_2
 ]
 
 OPTIONS_FOR_DATA = {vol.Optional(source): str for source in SOURCES}

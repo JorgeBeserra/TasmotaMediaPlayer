@@ -8,8 +8,6 @@ CONF_SOURCES = "sources"
 
 CONF_SOURCE_1 = "source_1"
 CONF_SOURCE_2 = "source_2"
-CONF_SOURCE_3 = "source_3"
-CONF_SOURCE_4 = "source_4"
 
 CONF_NOT_FIRST_RUN = "not_first_run"
 
