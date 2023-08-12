@@ -40,10 +40,8 @@ async def async_setup_entry(
 
     switch_entities = []
 
-    zone_id = 1
-
-    switch_entities.append(SwitchCapability(hass, monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))    
-    switch_entities.append(SwitchCapability(hass, monoprice, "TONE", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    switch_entities.append(SwitchCapability(hass, monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id))    
+    switch_entities.append(SwitchCapability(hass, monoprice, "TONE", config_entry, config_entry.unique_id or config_entry.entry_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
@@ -53,12 +51,11 @@ async def async_setup_entry(
 class SwitchCapability(SwitchEntity):
     """Representation of a Monoprice switch entity."""
 
-    def __init__(self, hass, monoprice, control_type, config_entry, unique_id, zone_id):
+    def __init__(self, hass, monoprice, control_type, config_entry, unique_id):
         """Initialize new zone controls."""
         self.hass = hass
         self._monoprice = monoprice
         self._control_type = control_type
-        self._zone_id = zone_id
 
         self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
@@ -72,10 +69,10 @@ class SwitchCapability(SwitchEntity):
         self._attr_native_step = 1
         self._attr_native_value = None
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._zone_id, unique_id)},
+            identifiers={(DOMAIN, unique_id)},
             manufacturer="Monoprice",
             model="6-Zone Amplifier",
-            name=f"Zone {self._zone_id}"
+            name="Zone"
         )
 
         self._temp_lock = asyncio.Lock()
