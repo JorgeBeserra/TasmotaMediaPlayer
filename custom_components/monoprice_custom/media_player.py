@@ -15,13 +15,16 @@ from homeassistant.components.media_player import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.helpers import (
+    config_validation as cv,
+    entity_platform,
+    service,
+)
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import voluptuous as vol
 
 from .controller import get_controller
-
 from .const import (
     CONF_NAME,
     CONF_SOURCES,
@@ -56,6 +59,11 @@ from .const import (
     COMMANDS_ENCODING,
     SUPPORTED_CONTROLLER
 )
+
+_LOGGER = logging.getLogger(__name__)
+
+MAX_VOLUME = 38
+PARALLEL_UPDATES = 1
 
 SET_FRONT_LEFT_SCHEMA = vol.Schema(
     {
@@ -126,12 +134,6 @@ SET_TREBLE_SCHEMA = vol.Schema(
         vol.Optional(ATTR_TREBLE, default=5): vol.All(int, vol.Range(min=0, max=15))
     }
 )
-
-_LOGGER = logging.getLogger(__name__)
-
-MAX_VOLUME = 38
-PARALLEL_UPDATES = 1
-
 
 # @core.callback
 # def _get_sources_from_dict(data):

@@ -58,7 +58,7 @@ class MQTTController(AbstractController):
     async def send(self, command, level: int):
         """Send a command."""
         service_data = {
-            'topic': f'cmnd/{self.unique_id}/driver129',
+            'topic': f'cmnd/{self._unique_id}/driver129',
             'payload': f'{command} {level}'
         }
 
