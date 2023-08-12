@@ -15,8 +15,6 @@ from .const import (
     CONF_SOURCE_2,
     CONF_SOURCE_3,
     CONF_SOURCE_4,
-    CONF_SOURCE_5,
-    CONF_SOURCE_6,
     CONF_SOURCES,
     DOMAIN,
 )
@@ -27,9 +25,7 @@ SOURCES = [
     CONF_SOURCE_1,
     CONF_SOURCE_2,
     CONF_SOURCE_3,
-    CONF_SOURCE_4,
-    CONF_SOURCE_5,
-    CONF_SOURCE_6,
+    CONF_SOURCE_4
 ]
 
 OPTIONS_FOR_DATA = {vol.Optional(source): str for source in SOURCES}

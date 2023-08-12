@@ -8,9 +8,7 @@
           "source_1": "Name of source #1",
           "source_2": "Name of source #2",
           "source_3": "Name of source #3",
-          "source_4": "Name of source #4",
-          "source_5": "Name of source #5",
-          "source_6": "Name of source #6"
+          "source_4": "Name of source #4"
         }
       }
     },
@@ -30,9 +28,7 @@
           "source_1": "[%key:component::monoprice::config::step::user::data::source_1%]",
           "source_2": "[%key:component::monoprice::config::step::user::data::source_2%]",
           "source_3": "[%key:component::monoprice::config::step::user::data::source_3%]",
-          "source_4": "[%key:component::monoprice::config::step::user::data::source_4%]",
-          "source_5": "[%key:component::monoprice::config::step::user::data::source_5%]",
-          "source_6": "[%key:component::monoprice::config::step::user::data::source_6%]"
+          "source_4": "[%key:component::monoprice::config::step::user::data::source_4%]"
         }
       }
     }
@@ -45,6 +41,30 @@
     "restore": {
       "name": "Restore",
       "description": "Restores a snapshot of the media player zone."
+    },
+    "set_front_left": {
+      "name": "Set Front Left",
+      "description": "Set the front right level."
+    },
+    "set_front_right": {
+      "name": "Set Front Right",
+      "description": "Set the front right level."
+    },
+    "set_center": {
+      "name": "Set Center",
+      "description": "Set the center level."
+    },
+    "set_rear_left": {
+      "name": "Set Balance",
+      "description": "Set the rear left level."
+    },
+    "set_rear_right": {
+      "name": "Set Balance",
+      "description": "Set the rear right level."
+    },
+    "set_subwoofer": {
+      "name": "Set Subwoofer",
+      "description": "Set the subwoofer level."
     },
     "set_balance": {
       "name": "Set Balance",

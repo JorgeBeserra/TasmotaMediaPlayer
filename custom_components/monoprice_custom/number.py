@@ -105,31 +105,31 @@ class MonopriceZone(NumberEntity):
 
         if(control_type == "FrontLeft"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "FrontRight"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "Center"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "RearLeft"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "RearRight"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "Subwoofer"):
             self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_max_value = 15
             self._attr_icon = "mdi:speaker"
         elif(control_type == "Balance"):
-            self._attr_native_min_value = 0
-            self._attr_native_max_value = 20
+            self._attr_native_min_value = -7
+            self._attr_native_max_value = 7
             self._attr_icon = "mdi:scale-balance"
         elif(control_type == "Bass"):
             self._attr_native_min_value = -7
