@@ -62,7 +62,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-MAX_VOLUME = 38
+MAX_VOLUME = 100
 PARALLEL_UPDATES = 1
 
 SET_FRONT_LEFT_SCHEMA = vol.Schema(
@@ -441,7 +441,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
-        await self.send_command(self._commands['volumeUp'], 0)
+        await self.send_command(self._commands['volumeSet'], volume)
         await self.async_update_ha_state()
 
     async def async_volume_down(self) -> None:
@@ -450,7 +450,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
-        await self.send_command(self._commands['volumeDown'], 0)
+        await self.send_command(self._commands['volumeSet'], volume)
         await self.async_update_ha_state()
 
     def set_front_left(self, call) -> None:
