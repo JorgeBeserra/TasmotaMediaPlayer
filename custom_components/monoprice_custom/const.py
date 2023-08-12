@@ -6,8 +6,9 @@ CONF_PORT = "port"
 CONF_SOURCES = "sources"
 CONF_SOURCE_1 = "source_1"
 CONF_SOURCE_2 = "source_2"
-CONF_DELAY = "delay"
+CONF_DELAY = 0.5
 CONF_NOT_FIRST_RUN = "not_first_run"
+CONF_CONTROLLER_DATA = "controller_data"
 
 DOMAIN = "monoprice"
 
@@ -26,6 +27,9 @@ SERVICE_SET_BALANCE = "set_balance"
 SERVICE_SET_BASS = "set_bass"
 SERVICE_SET_MIDDLE = "set_middle"
 SERVICE_SET_TREBLE = "set_treble"
+SERVICE_SET_MUTE = "set_mute"
+SERVICE_SET_3D = "set_3d"
+SERVICE_SET_TONE = "set_tone"
 
 UNDO_UPDATE_LISTENER = "update_update_listener"
 MAX_VOLUME = 79
