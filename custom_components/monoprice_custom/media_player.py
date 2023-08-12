@@ -429,7 +429,7 @@ class MonopriceZone(MediaPlayerEntity):
 
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute (true) or unmute (false) media player."""
-        await self.send_command(self._commands['mute'])
+        await self.send_command(self._commands['mute'], 0)
         await self.async_update_ha_state()
 
     async def async_set_volume_level(self, volume: float) -> None:
@@ -455,67 +455,81 @@ class MonopriceZone(MediaPlayerEntity):
         await self.send_command(self._commands['volumeSet'], volume)
         await self.async_update_ha_state()
 
-    def set_front_left(self, call) -> None:
+    async def async_set_front_left(self, call) -> None:
         """Set front left level."""
         level = int(call.data.get(ATTR_FRONT_LEFT))
-        self.send_command(self._commands['frontLeft'], level)
+        await self.send_command(self._commands['frontLeft'], level)
+        await self.async_update_ha_state()
 
-    def set_front_right(self, call) -> None:
+    async def async_set_front_right(self, call) -> None:
         """Set front right level."""
         level = int(call.data.get(ATTR_FRONT_RIGHT))
-        self.send_command(self._commands['frontRight'], level)
+        await self.send_command(self._commands['frontRight'], level)
+        await self.async_update_ha_state()
 
-    def set_center(self, call) -> None:
+    async def async_set_center(self, call) -> None:
         """Set center level."""
         level = int(call.data.get(ATTR_CENTER))
-        self.send_command(self._commands['center'], level)
+        await self.send_command(self._commands['center'], level)
+        await self.async_update_ha_state()
 
-    def set_rear_left(self, call) -> None:
+    async def async_set_rear_left(self, call) -> None:
         """Set rear left level."""
         level = int(call.data.get(ATTR_REAR_LEFT))
-        self.send_command(self._commands['rearLeft'], level)
+        await self.send_command(self._commands['rearLeft'], level)
+        await self.async_update_ha_state()
 
-    def set_rear_right(self, call) -> None:
+    async def async_set_rear_right(self, call) -> None:
         """Set rear right level."""
         level = int(call.data.get(ATTR_REAR_RIGHT))
-        self.send_command(self._commands['rearRight'], level)
+        await self.send_command(self._commands['rearRight'], level)
+        await self.async_update_ha_state()
 
-    def set_subwoofer(self, call) -> None:
+    async def async_set_subwoofer(self, call) -> None:
         """Set subwoofer level."""
         level = int(call.data.get(ATTR_SUBWOOFER))
-        self.send_command(self._commands['subwoofer'], level)
+        await self.send_command(self._commands['subwoofer'], level)
+        await self.async_update_ha_state()
 
-    def set_balance(self, call) -> None:
+    async def async_set_balance(self, call) -> None:
         """Set balance level."""
         level = int(call.data.get(ATTR_BALANCE))
-        self.send_command(self._commands['balance'], level)
+        await self.send_command(self._commands['balance'], level)
+        await self.async_update_ha_state()
  
-    def set_bass(self, call) -> None:
+    async def async_set_bass(self, call) -> None:
         """Set bass level."""
         level = int(call.data.get(ATTR_BASS))
-        self.send_command(self._commands['bass'], level)
+        await self.send_command(self._commands['bass'], level)
+        await self.async_update_ha_state()
     
-    def set_middle(self, call) -> None:
+    async def async_set_middle(self, call) -> None:
         """Set middle level."""
         level = int(call.data.get(ATTR_MIDDLE))
-        self.send_command(self._commands['middle'], level)
+        await self.send_command(self._commands['middle'], level)
+        await self.async_update_ha_state()
 
-    def set_treble(self, call) -> None:
+    async def async_set_treble(self, call) -> None:
         """Set treble level."""
         level = int(call.data.get(ATTR_TREBLE))
-        self.send_command(self._commands['treble'], level)
+        await self.send_command(self._commands['treble'], level)
+        await self.async_update_ha_state()
 
-    def select_sound_mode(self, sound_mode) -> None:
+    async def async_select_sound_mode(self, sound_mode) -> None:
         """Switch the sound mode of the entity."""
         self._sound_mode = sound_mode
         if(sound_mode == "Normal"):
-            self.send_command(self._commands['setNormalBass'], 1)
+            await self.send_command(self._commands['setNormalBass'], 1)
+            await self.async_update_ha_state()
         elif(sound_mode == "High Bass"):
-            self.send_command(self._commands['setHighBass'], 1)
+            await self.send_command(self._commands['setHighBass'], 1)
+            await self.async_update_ha_state()
         elif(sound_mode == "Medium Bass"):
-            self.send_command(self._commands['setMediumBass'], 1)
+            await self.send_command(self._commands['setMediumBass'], 1)
+            await self.async_update_ha_state()
         elif(sound_mode == "Low Bass"):
-            self.send_command(self._commands['setLowBass'], 1)
+            await self.send_command(self._commands['setLowBass'], 1)
+            await self.async_update_ha_state()
     
     async def send_command(self, command, level):
         async with self._temp_lock:
