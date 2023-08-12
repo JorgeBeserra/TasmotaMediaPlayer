@@ -71,6 +71,9 @@ class MQTTController(AbstractController):
 
         await self.hass.services.async_call(
             'mqtt', 'publish', service_data)
+    
+    async def exist(self):
+        return self.hass.services.has_service('mqtt', 'publish')
 
 class ESPHomeController(AbstractController):
     """Controls a ESPHome device."""
