@@ -43,9 +43,9 @@ async def async_setup_entry(
         #zone_id = (i * 10) + j
     zone_id = 1
     _LOGGER.info("Adding sensor entities for zone %d for port %s", zone_id, port)
-    entities.append(MonopriceZone(monoprice, "Keypad", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Public Anouncement", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Do Not Disturb", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Mute", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(monoprice, "Tone", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
@@ -80,11 +80,11 @@ class MonopriceZone(SensorEntity):
             name=f"Zone {self._zone_id}"
         )
 
-        if(sensor_type == "Keypad"):
+        if(sensor_type == "Mute"):
             self._attr_icon = "mdi:dialpad"
-        elif(sensor_type == "Public Anouncement"):
+        elif(sensor_type == "3D"):
             self._attr_icon = "mdi:bullhorn"
-        elif(sensor_type == "Do Not Disturb"):
+        elif(sensor_type == "Tone"):
             self._attr_icon = "mdi:weather-night"
             
         self._update_success = True
@@ -102,11 +102,11 @@ class MonopriceZone(SensorEntity):
         #state = {'keypad':false, 'pa': True, 'do_not_disturb':false}
         self._update_success = True
 
-        if(self._sensor_type == "Keypad"):
+        if(self._sensor_type == "Mute"):
             self._attr_native_value = '{}'.format('Disconnected')
-        elif(self._sensor_type == "Public Anouncement"):
+        elif(self._sensor_type == "3D"):
             self._attr_native_value = '{}'.format('Off')
-        elif(self._sensor_type == "Do Not Disturb"):
+        elif(self._sensor_type == "Tone"):
             self._attr_native_value = '{}'.format('Off')
 
     @property
