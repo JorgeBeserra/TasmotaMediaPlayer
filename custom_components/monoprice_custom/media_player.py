@@ -1,4 +1,6 @@
 """Support for interfacing with Monoprice 6 zone home audio controller."""
+import asyncio
+import json
 import logging
 
 from serial import SerialException
@@ -350,6 +352,8 @@ class MonopriceZone(MediaPlayerEntity):
         self._snapshot = None
         self._update_success = True
 
+        self._temp_lock = asyncio.Lock()
+
         self._controller = get_controller(
             self.hass,
             self._supported_controller,
@@ -505,8 +509,9 @@ class MonopriceZone(MediaPlayerEntity):
         elif(sound_mode == "Low Bass"):
             self.send_command(self._commands['setLowBass'], 1)
     
-    def send_command(self, command, level):
-        try:
-            self._controller.send(command, level)
-        except Exception as e:
-            _LOGGER.exception(e)
+    async def send_command(self, command, level):
+        async with self._temp_lock:
+            try:
+                self._controller.send(command, level)
+            except Exception as e:
+                _LOGGER.exception(e)
