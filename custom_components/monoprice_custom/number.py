@@ -1,6 +1,7 @@
 """Support for interfacing with Monoprice 6 zone home audio controller."""
 from code import interact
 import logging
+import asyncio
 
 from serial import SerialException
 
@@ -143,6 +144,8 @@ class MonopriceZone(NumberEntity):
             self._attr_native_min_value = -14
             self._attr_native_max_value =  14
             self._attr_icon = "mdi:surround-sound"
+        
+        self._temp_lock = asyncio.Lock()
         
         self._controller = get_controller(
             self.hass,

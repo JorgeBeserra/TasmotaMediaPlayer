@@ -3,8 +3,6 @@ import asyncio
 import json
 import logging
 
-from serial import SerialException
-
 from homeassistant import core
 from homeassistant.components.media_player import (
     MediaPlayerDeviceClass,
