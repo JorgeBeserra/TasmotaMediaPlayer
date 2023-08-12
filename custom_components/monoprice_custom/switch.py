@@ -40,6 +40,8 @@ async def async_setup_entry(
 
     switch_entities = []
 
+    zone_id = 1
+
     switch_entities.append(SwitchCapability(hass, monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))    
     switch_entities.append(SwitchCapability(hass, monoprice, "TONE", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
