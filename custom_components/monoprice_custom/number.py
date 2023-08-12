@@ -98,10 +98,10 @@ class MonopriceZone(NumberEntity):
         self._attr_native_step = 1
         self._attr_native_value = None
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._zone_id, unique_id)},
+            identifiers={(DOMAIN, unique_id)},
             manufacturer="Monoprice",
             model="6-Zone Amplifier",
-            name=f"Zone {self._zone_id}"
+            name=f"Zone"
         )
 
         if(control_type == "FrontLeft"):
