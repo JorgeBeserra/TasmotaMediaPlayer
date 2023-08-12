@@ -90,3 +90,6 @@ class ESPHomeController(AbstractController):
 
         await self.hass.services.async_call(
             'esphome', self._controller_data, service_data)
+    
+    async def exist(self):
+        return self.hass.services.has_service('esphome', self._controller_data)
