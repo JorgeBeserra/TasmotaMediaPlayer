@@ -3,7 +3,7 @@ from code import interact
 import logging
 import asyncio
 
-from serial import SerialException
+#from serial import SerialException
 
 from homeassistant import core
 try:
