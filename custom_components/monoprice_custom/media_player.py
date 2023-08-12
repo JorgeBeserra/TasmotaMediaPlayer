@@ -429,12 +429,9 @@ class MonopriceZone(MediaPlayerEntity):
 
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute (true) or unmute (false) media player."""
-        if(mute is True):
-            await self.send_command(self._commands['muteOn'], 0)
-            await self.async_update_ha_state()
-        elif(mute is False):
-            await self.send_command(self._commands['muteOff'], 0)
-            await self.async_update_ha_state()
+        await self.send_command(self._commands['mute'], mute)
+        await self.async_update_ha_state()
+        
 
     async def async_set_volume_level(self, volume: float) -> None:
         """Set volume level, range 0..1."""
