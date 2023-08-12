@@ -57,13 +57,15 @@ from .const import (
     CONF_CONTROLLER_DATA,
     COMMANDS,
     COMMANDS_ENCODING,
-    SUPPORTED_CONTROLLER
+    SUPPORTED_CONTROLLER,
+    MAX_VOLUME,
+    PARALLEL_UPDATES
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-MAX_VOLUME = 100
-PARALLEL_UPDATES = 1
+
+
 
 SET_FRONT_LEFT_SCHEMA = vol.Schema(
     {

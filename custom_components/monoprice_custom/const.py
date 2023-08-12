@@ -29,6 +29,8 @@ SERVICE_SET_TREBLE = "set_treble"
 FIRST_RUN = "first_run"
 MONOPRICE_OBJECT = "['zone_status':{14,1,1,1,1,0,0,0,0,0,1}]"
 UNDO_UPDATE_LISTENER = "update_update_listener"
+MAX_VOLUME = 79
+PARALLEL_UPDATES = 1
 
 ATTR_FRONT_LEFT = "level"
 ATTR_FRONT_RIGHT = "level"
