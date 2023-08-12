@@ -400,32 +400,32 @@ class MonopriceZone(MediaPlayerEntity):
         """Return the current source as medial title."""
         return self.source
 
-    def snapshot(self):
+    async def async_snapshot(self):
         """Save zone's current state."""
         #self._snapshot = self._monoprice.zone_status(self._zone_id)
-        self._snapshot = self.send_command(self._commands['status'], 0)
+        self._snapshot = await self.send_command(self._commands['status'], 0)
 
-    def restore(self):
+    async def async_restore(self):
         """Restore saved state."""
         if self._snapshot:
             #self._monoprice.restore_zone(self._snapshot)
-            self.send_command(self._commands['snapshot'], 1)
-            self.schedule_update_ha_state(True)
+            await self.send_command(self._commands['snapshot'], 1)
+            await self.schedule_update_ha_state(True)
 
-    def select_source(self, source: str) -> None:
+    async def async_select_source(self, source: str) -> None:
         """Set input source."""
         if source not in self._source_name_id:
             return
         #idx = self._source_name_id[source]
         #self._monoprice.set_source(self._zone_id, idx)
 
-    def turn_on(self) -> None:
+    async def async_turn_on(self) -> None:
         """Turn the media player on."""
-        self.send_command(self._commands['off'], 1)
+        await self.send_command(self._commands['off'], 1)
 
-    def turn_off(self) -> None:
+    async def async_turn_off(self) -> None:
         """Turn the media player off."""
-        self.send_command(self._commands['off'], 0)
+        await self.send_command(self._commands['off'], 0)
 
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute (true) or unmute (false) media player."""
