@@ -42,6 +42,11 @@ class AbstractController(ABC):
         self._controller_data = controller_data
         self._delay = delay
 
+    async def send(self, command, level: int):
+        """Send a command."""
+        async with self._temp_lock:
+            await self._send(command, level)
+
     @abstractmethod
     def check_encoding(self, encoding):
         """Check if the encoding is supported by the controller."""

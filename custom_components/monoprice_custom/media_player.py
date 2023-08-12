@@ -510,8 +510,7 @@ class MonopriceZone(MediaPlayerEntity):
             self.send_command(self._commands['setLowBass'], 1)
     
     async def send_command(self, command, level):
-        async with self._temp_lock:
-            try:
-                self._controller.send(command, level)
-            except Exception as e:
-                _LOGGER.exception(e)
+        try:
+            await self._controller.send(command, level)
+        except Exception as e:
+            _LOGGER.exception(e)
