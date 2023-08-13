@@ -56,7 +56,7 @@ class SwitchCapability(SwitchEntity):
         self.hass = hass
         self._monoprice = monoprice
         self._control_type = control_type
-        self._attr_device_class = SwitchDeviceClass.SWITCH
+        self._attr_device_class = SwitchDeviceClass.OUTLET
 
         self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
