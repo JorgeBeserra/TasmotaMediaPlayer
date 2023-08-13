@@ -5,7 +5,7 @@ import asyncio
 
 # from aiomusiccast.capabilities import BinarySetter
 
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.switch import SwitchDeviceClass, SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform, service
@@ -56,6 +56,7 @@ class SwitchCapability(SwitchEntity):
         self.hass = hass
         self._monoprice = monoprice
         self._control_type = control_type
+        self._attr_device_class = SwitchDeviceClass.SWITCH
 
         self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
