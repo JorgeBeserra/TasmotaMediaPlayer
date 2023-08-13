@@ -56,7 +56,7 @@ class SwitchCapability(SwitchEntity):
         self.hass = hass
         self._monoprice = monoprice
         self._control_type = control_type
-        self._attr_device_class = SwitchDeviceClass.OUTLET
+        
 
         self._delay = CONF_DELAY
         self._controller_data = CONF_CONTROLLER_DATA
@@ -69,6 +69,7 @@ class SwitchCapability(SwitchEntity):
         self._attr_name = f"{control_type} level"
         self._attr_native_step = 1
         self._attr_native_value = None
+        self._attr_device_class = SwitchDeviceClass.SWITCH
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, unique_id)},
             manufacturer="Monoprice",
@@ -92,7 +93,7 @@ class SwitchCapability(SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return the current status."""
-        #return self.capability.current
+        return self._feature.is_on
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the capability."""
