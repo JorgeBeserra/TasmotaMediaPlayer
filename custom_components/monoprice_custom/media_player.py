@@ -433,7 +433,7 @@ class MonopriceZone(MediaPlayerEntity):
 
     async def async_set_volume_level(self, volume: float) -> None:
         """Set volume level, range 0..1."""
-        await self.send_command(self._commands['volume'], round(volume * MAX_VOLUME))
+        await self.send_command(self._commands['volumeSet'], round(volume * MAX_VOLUME))
         await self.async_update_ha_state()
 
     async def async_volume_up(self) -> None:
@@ -442,7 +442,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, min(volume + 1, MAX_VOLUME))
-        await self.send_command(self._commands['volume'], volume)
+        await self.send_command(self._commands['volumeSet'], volume)
         await self.async_update_ha_state()
 
     async def async_volume_down(self) -> None:
@@ -451,7 +451,7 @@ class MonopriceZone(MediaPlayerEntity):
             return
         volume = round(self.volume_level * MAX_VOLUME)
         #self._monoprice.set_volume(self._zone_id, max(volume - 1, 0))
-        await self.send_command(self._commands['volume'], volume)
+        await self.send_command(self._commands['volumeSet'], volume)
         await self.async_update_ha_state()
 
     async def async_set_front_left(self, call) -> None:
