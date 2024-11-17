@@ -32,7 +32,7 @@ class AbstractController(ABC):
         self.hass = hass
         self._controller = controller
         self._encoding = encoding
-        self._unique_id = "tasmota-4232F0"
+        self._unique_id = "tasmota_4232F0"
         self._controller_data = controller_data
         self._delay = delay
 
