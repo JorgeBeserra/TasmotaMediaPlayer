@@ -103,7 +103,7 @@ class MonopriceZone(SensorEntity):
         self._update_success = True
 
         if(self._sensor_type == "Mute"):
-            self._attr_native_value = '{}'.format('Disconnected')
+            self._attr_native_value = '{}'.format('Off')
         elif(self._sensor_type == "3D"):
             self._attr_native_value = '{}'.format('Off')
         elif(self._sensor_type == "Tone"):
