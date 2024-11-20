@@ -43,9 +43,9 @@ async def async_setup_entry(
         #zone_id = (i * 10) + j
     zone_id = 1
     _LOGGER.info("Adding sensor entities for zone %d for port %s", zone_id, port)
-    entities.append(MonopriceZone(monoprice, "Mute", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
-    entities.append(MonopriceZone(monoprice, "Tone", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Mute", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "3D", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
+    entities.append(MonopriceZone(hass, monoprice, "Tone", config_entry, config_entry.unique_id or config_entry.entry_id, zone_id))
 
     # only call update before add if it's the first run so we can try to detect zones
     first_run = hass.data[DOMAIN][config_entry.entry_id][FIRST_RUN]
