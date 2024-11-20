@@ -1,6 +1,7 @@
 """Support for interfacing with Monoprice 6 zone home audio controller."""
 from code import interact
 import logging
+import json
 
 from serial import SerialException
 
