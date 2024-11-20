@@ -91,7 +91,7 @@ class MonopriceZone(SensorEntity):
 
         # Tópico para escutar as mensagens MQTT
         self._mqtt_topic = f"stat/{unique_id}/RESULT"
-        self._hass.loop.create_task(self._subscribe_to_mqtt())
+        self.hass.loop.create_task(self._subscribe_to_mqtt())
 
     async def _subscribe_to_mqtt(self):
         """Subscribe to the MQTT topic and handle updates."""
