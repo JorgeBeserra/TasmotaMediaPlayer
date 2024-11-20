@@ -81,13 +81,42 @@ class MonopriceZone(SensorEntity):
         )
 
         if(sensor_type == "Mute"):
-            self._attr_icon = "mdi:dialpad"
+            self._attr_icon = "mdi:volume-mute"
         elif(sensor_type == "3D"):
-            self._attr_icon = "mdi:bullhorn"
+            self._attr_icon = "mdi:3d-rotate"
         elif(sensor_type == "Tone"):
-            self._attr_icon = "mdi:weather-night"
+            self._attr_icon = "mdi:tune"
             
         self._update_success = True
+
+        # Tópico para escutar as mensagens MQTT
+        self._mqtt_topic = f"stat/{unique_id}/RESULT"
+        self._hass.loop.create_task(self._subscribe_to_mqtt())
+
+    async def _subscribe_to_mqtt(self):
+        """Subscribe to the MQTT topic and handle updates."""
+        async def message_callback(msg):
+            """Handle incoming MQTT messages."""
+            try:
+                payload = json.loads(msg.payload)
+                if "PT2322" in payload:
+                    self._update_from_payload(payload["PT2322"])
+            except json.JSONDecodeError:
+                _LOGGER.warning("Invalid JSON in MQTT payload: %s", msg.payload)
+
+        await self._hass.components.mqtt.async_subscribe(self._mqtt_topic, message_callback)
+        _LOGGER.info("Subscribed to MQTT topic: %s", self._mqtt_topic)
+
+    def _update_from_payload(self, payload):
+        """Update the sensor based on the payload."""
+        if self._sensor_type == "Mute":
+            self._attr_native_value = payload.get("Mute", "Unknown")
+        elif self._sensor_type == "3D":
+            self._attr_native_value = payload.get("3D", "Unknown")
+        elif self._sensor_type == "Tone":
+            self._attr_native_value = payload.get("Tone", "Unknown")
+
+        self.async_write_ha_state()  # Atualiza o estado no Home Assistant
 
     def update(self):
         """Retrieve latest value."""
