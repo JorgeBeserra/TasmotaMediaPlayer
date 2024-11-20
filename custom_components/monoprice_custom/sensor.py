@@ -91,7 +91,7 @@ class MonopriceZone(SensorEntity):
         self._update_success = True
 
         # Tópico para escutar as mensagens MQTT
-        self._mqtt_topic = f"stat/{unique_id}/RESULT"
+        self._mqtt_topic = f"stat/tasmota_4232F0/RESULT"
         self._hass.async_create_task(self._subscribe_to_mqtt())
 
     async def _subscribe_to_mqtt(self):
