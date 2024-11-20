@@ -64,9 +64,10 @@ async def async_setup_entry(
 class MonopriceZone(SensorEntity):
     """Representation of a Monoprice amplifier zone."""
 
-    def __init__(self, monoprice, sensor_type, config_entry, unique_id,zone_id):
+    def __init__(self, hass, monoprice, sensor_type, config_entry, unique_id,zone_id):
         """Initialize new zone sensors."""
         self._monoprice = monoprice
+        self._hass = hass 
         self._sensor_type = sensor_type
         self._zone_id = zone_id
         self._attr_unique_id = f"{unique_id}_{self._sensor_type}"
@@ -91,7 +92,7 @@ class MonopriceZone(SensorEntity):
 
         # Tópico para escutar as mensagens MQTT
         self._mqtt_topic = f"stat/{unique_id}/RESULT"
-        self.hass.loop.create_task(self._subscribe_to_mqtt())
+        self._hass.async_create_task(self._subscribe_to_mqtt())
 
     async def _subscribe_to_mqtt(self):
         """Subscribe to the MQTT topic and handle updates."""
