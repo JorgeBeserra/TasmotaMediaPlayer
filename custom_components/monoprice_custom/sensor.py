@@ -100,7 +100,7 @@ class MonopriceZone(SensorEntity):
         async def message_callback(msg):
             """Handle incoming MQTT messages."""
             try:
-                payload = msg.payload
+                payload = msg.payload.decode()
                 if "PT2322" in payload:
                     self._update_from_payload(payload["PT2322"])
             except json.JSONDecodeError:
